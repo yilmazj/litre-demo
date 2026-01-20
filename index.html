@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Litre - Prototip V19</title>
+    <title>Litre - Prototip V20</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -21,15 +21,12 @@
         .nav-item.active { color: #fff; transform: translateY(-5px); }
         .nav-item.active::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff; }
 
-        /* 🎡 Wheel Picker (Sayaç) Revize */
+        /* 🎡 Wheel Picker (Sayaç) */
         .picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 1500; display: none; align-items: flex-end; }
         .picker-container { background: #1c1c1e; width: 100%; border-radius: 35px 35px 0 0; padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); animation: pickerSlide 0.3s ease-out; position: relative; }
         @keyframes pickerSlide { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
         .wheel-wrapper { position: relative; height: 220px; width: 100%; overflow: hidden; }
-        /* Ortadaki Gri Bar (Resimdeki 33 efekti) */
         .wheel-selection-bar { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); height: 44px; background: rgba(255, 255, 255, 0.08); border-radius: 12px; z-index: 0; pointer-events: none; }
-        
         .wheel-picker { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; position: relative; z-index: 1; }
         .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.3; transition: 0.3s; color: #fff; }
         .wheel-item.selected { opacity: 1; font-weight: 700; font-size: 22px; }
@@ -47,6 +44,8 @@
         /* 💎 Global Styles */
         .glass-card { background: rgba(28, 28, 30, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .silver-grad { background: linear-gradient(145deg, #FFFFFF, #C8C8C8, #808080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-radius: 20px; transition: background-color 0.2s; }
+        .menu-item:active { background-color: rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="max-w-md mx-auto h-screen flex flex-col bg-black">
@@ -76,11 +75,16 @@
     <div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-1000">
         <main class="flex-1 overflow-hidden relative">
             
-            <div id="home" class="tab-content active p-6 pt-14 space-y-8 no-scrollbar">
-                <header class="flex justify-between items-center">
-                    <h2 class="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase italic">ATAŞEHİR (2026)</h2>
-                    <div class="p-2.5 bg-zinc-900/80 rounded-2xl border border-white/5"><i data-lucide="settings" class="w-5 h-5 opacity-40"></i></div>
+            <div id="home" class="tab-content active p-6 pt-8 space-y-6 no-scrollbar">
+                <header class="flex justify-center items-center py-2 relative mb-2">
+                     <div class="flex items-center gap-2">
+                        <svg width="24" height="32" viewBox="0 0 100 130">
+                            <path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                         <h1 class="text-2xl font-bold text-white tracking-tight">Litre</h1>
+                     </div>
                 </header>
+                
                 <h1 class="text-3xl font-bold silver-grad leading-tight">Yakınımdaki Fiyatlar</h1>
 
                 <div onclick="showTab('maps', document.getElementById('map-nav'))" class="w-full h-64 apple-map rounded-[3.5rem] border border-white/10 relative overflow-hidden shadow-2xl active:scale-[0.97] transition-all">
@@ -89,6 +93,13 @@
                     <div class="price-pin bg-[#22c55e] top-[20%] right-[15%] text-white">41.45</div>
                     <div class="price-pin bg-[#eab308] top-[30%] left-[15%] text-white">42.10</div>
                     <div class="price-pin bg-[#ef4444] bottom-[25%] right-[25%] text-white">42.50</div>
+                </div>
+
+                <div class="flex justify-center my-2">
+                    <div class="flex items-center gap-2 px-5 py-2.5 bg-zinc-900/60 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <span class="text-[10px] font-bold text-zinc-300 uppercase tracking-wider">Mevcut Konum: Kartal</span>
+                    </div>
                 </div>
 
                 <div class="space-y-6">
@@ -167,8 +178,8 @@
                 </div>
             </div>
 
-            <div id="profile" class="tab-content p-6 pt-14 space-y-10 no-scrollbar">
-                <div class="flex flex-col items-center">
+            <div id="profile" class="tab-content p-6 pt-14 space-y-8 no-scrollbar">
+                <div class="flex flex-col items-center mb-4">
                     <div class="w-24 h-24 bg-zinc-900 rounded-full border border-white/10 flex items-center justify-center text-5xl mb-4 shadow-2xl">👤</div>
                     <h2 class="text-2xl font-bold silver-grad">Kullanıcı</h2>
                     <div class="mt-1 px-4 py-1 bg-zinc-900/50 rounded-full border border-white/5 text-[9px] font-black tracking-widest text-zinc-500 uppercase">Premium Member</div>
@@ -191,7 +202,27 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-6 rounded-[2.5rem] border border-red-900/10 bg-red-950/5 text-red-500 font-black text-xs tracking-widest text-center">OTURUMU KAPAT</div>
+
+                <div class="glass-card p-4 rounded-[2.5rem] space-y-1 shadow-2xl">
+                    <div class="menu-item">
+                        <div class="flex items-center gap-4"><i data-lucide="scroll-text" class="w-5 h-5 text-zinc-500"></i><span class="text-sm font-medium">Yakıt Geçmişi</span></div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-700"></i>
+                    </div>
+                    <div class="menu-item">
+                        <div class="flex items-center gap-4"><i data-lucide="bell" class="w-5 h-5 text-zinc-500"></i><span class="text-sm font-medium">Bildirim Ayarları</span></div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-700"></i>
+                    </div>
+                    <div class="menu-item">
+                        <div class="flex items-center gap-4"><i data-lucide="settings-2" class="w-5 h-5 text-zinc-500"></i><span class="text-sm font-medium">Uygulama Ayarları</span></div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-700"></i>
+                    </div>
+                     <div class="menu-item">
+                        <div class="flex items-center gap-4"><i data-lucide="help-circle" class="w-5 h-5 text-zinc-500"></i><span class="text-sm font-medium">Yardım Merkezi</span></div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-700"></i>
+                    </div>
+                </div>
+                
+                <div class="p-6 rounded-[2.5rem] border border-red-900/10 bg-red-950/5 text-red-500 font-black text-xs tracking-widest text-center active:scale-95 transition-transform">OTURUMU KAPAT</div>
             </div>
 
             <div id="history" class="tab-content flex items-center justify-center p-6"><p class="text-zinc-700 font-black uppercase tracking-widest italic">Harcama Analizi</p></div>
@@ -236,10 +267,10 @@
             activeType = type;
             const wheel = document.getElementById('wheel');
             document.getElementById('pickerTitle').innerText = type + ' Seç';
-            wheel.innerHTML = '<div style="height: 88px;"></div>'; // Center offset
+            wheel.innerHTML = '<div style="height: 88px;"></div>';
             let data = type === 'Marka' ? Object.keys(carData) : type === 'Model' ? carData[selectedMarka] || ['Önce Marka Seç'] : years;
             data.forEach(item => wheel.innerHTML += `<div class="wheel-item">${item}</div>`);
-            wheel.innerHTML += '<div style="height: 88px;"></div>'; // Center offset
+            wheel.innerHTML += '<div style="height: 88px;"></div>';
             document.getElementById('pickerOverlay').style.display = 'flex';
         }
 
