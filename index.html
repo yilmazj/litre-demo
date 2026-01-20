@@ -3,39 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Litre - 2026 Demo</title>
+    <title>Litre - Premium Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { background-color: #000; color: #fff; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        /* Premium Splash */
         #splash { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        /* 2026 Floating Tab Bar (Instagram/Snapchat Style) */
-        .floating-dock {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; height: 70px;
-            background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 35px;
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
+        .floating-dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; height: 70px; background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .tab-content { display: none; height: 100%; }
         .tab-content.active { display: block; animation: slideUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .nav-item { color: #555; transition: all 0.4s ease; position: relative; }
+        .nav-item { color: #555; transition: all 0.4s ease; }
         .nav-item.active { color: #fff; transform: translateY(-5px); }
         .nav-item.active::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff; }
 
-        /* Harita Kartı Dokusu */
-        .map-texture { background-color: #1a1a1a; background-image: radial-gradient(circle at 2px 2px, #333 1px, transparent 0); background-size: 24px 24px; }
+        /* Apple Maps Style Roads */
+        .apple-map {
+            background-color: #1a1b1e;
+            background-image: 
+                linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.02) 50%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.02) 50%, transparent 51%);
+            background-size: 80px 80px;
+        }
+        .road { position: absolute; background: rgba(255,255,255,0.03); border-radius: 20px; }
+        
+        /* Location Pulse */
+        .pulse { position: absolute; width: 14px; height: 14px; background: #3b82f6; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 15px #3b82f6; }
+        .pulse::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: #3b82f6; opacity: 0.4; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        @keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
+
+        /* Price Pin Style */
+        .price-pin { position: absolute; padding: 6px 10px; border-radius: 12px; font-weight: 800; font-size: 10px; border: 1.5px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .price-pin::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #fff; }
+
         .silver-grad { background: linear-gradient(145deg, #FFFFFF, #C8C8C8, #808080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="max-w-md mx-auto h-screen flex flex-col overflow-hidden bg-black selection:bg-zinc-800">
+<body class="max-w-md mx-auto h-screen flex flex-col overflow-hidden bg-black">
 
     <div id="splash">
         <svg width="100" height="130" viewBox="0 0 100 130" class="mb-2">
@@ -45,41 +49,44 @@
     </div>
 
     <div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-1000">
-        
         <main class="flex-1 overflow-hidden relative">
-            
             <div id="home" class="tab-content active overflow-y-auto p-6 pt-14 space-y-8">
                 <header class="flex justify-between items-center">
-                    <h2 class="text-xs font-black tracking-[0.2em] text-zinc-500 uppercase">ATAŞEHİR (2026)</h2>
+                    <h2 class="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase">ATAŞEHİR (2026)</h2>
                     <div class="p-2 bg-zinc-900/50 rounded-2xl border border-white/5"><i data-lucide="settings" class="w-5 h-5 opacity-40"></i></div>
                 </header>
 
                 <h1 class="text-3xl font-bold silver-grad leading-tight">Yakınımdaki<br>Fiyatlar</h1>
 
-                <div onclick="showTab('maps', document.getElementById('map-nav'))" class="w-full h-56 map-texture rounded-[3rem] border border-white/10 relative overflow-hidden shadow-2xl active:scale-95 transition-all">
-                    <div class="absolute inset-0 opacity-40 bg-[url('https://api.placeholder.com/600/400?text=.')]"></div>
-                    <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-[0_0_15px_#3b82f6]"></div>
-                    <div class="absolute top-1/4 right-1/4 bg-green-500 w-8 h-10 rounded-t-full rounded-b-xl border-2 border-white shadow-xl flex items-center justify-center font-bold text-[8px]">41.4</div>
-                    <div class="absolute bottom-1/3 left-1/4 bg-red-500 w-8 h-10 rounded-t-full rounded-b-xl border-2 border-white shadow-xl flex items-center justify-center font-bold text-[8px]">43.2</div>
-                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 px-4 py-1.5 rounded-full backdrop-blur-md text-[9px] font-bold tracking-widest uppercase border border-white/10">Keşfetmek için dokun</div>
+                <div onclick="showTab('maps', document.getElementById('map-nav'))" class="w-full h-64 apple-map rounded-[3.5rem] border border-white/10 relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] active:scale-[0.98] transition-all duration-300">
+                    <div class="road w-[200%] h-4 top-1/2 left-[-50%] rotate-[-15deg]"></div>
+                    <div class="road h-[200%] w-4 left-1/2 top-[-50%] rotate-[10deg]"></div>
+                    
+                    <div class="pulse top-[55%] left-[48%]"></div>
+
+                    <div class="price-pin bg-[#22c55e] top-[25%] right-[20%] text-white">41.4</div>
+                    <div class="price-pin bg-[#ef4444] bottom-[30%] left-[25%] text-white">43.2</div>
+
+                    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-6 py-2.5 rounded-full border border-white/10 text-[10px] font-black tracking-[0.1em] uppercase shadow-lg">
+                        Keşfetmek için dokun
+                    </div>
                 </div>
 
-                <div class="space-y-4 pb-32">
+                <div class="space-y-4 pb-36">
                     <div class="bg-zinc-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center rotate-3"><span class="text-black font-black text-[9px]">SHELL</span></div>
+                        <div class="flex items-center gap-5">
+                            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center border border-zinc-800 shadow-xl"><span class="text-black font-black text-[9px]">SHELL</span></div>
                             <div>
-                                <h3 class="font-bold text-gray-200">Shell - İçerenköy</h3>
-                                <p class="text-[11px] text-zinc-500 mt-1 uppercase font-bold tracking-widest">41,45 TL</p>
+                                <h3 class="font-bold text-gray-200 text-sm">Shell - İçerenköy</h3>
+                                <p class="text-[10px] text-zinc-500 mt-1 font-bold tracking-widest">41,45 TL</p>
                             </div>
                         </div>
-                        <i data-lucide="chevron-right" class="text-zinc-700"></i>
+                        <div class="w-10 h-10 bg-zinc-800/50 rounded-full flex items-center justify-center"><i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600"></i></div>
                     </div>
                 </div>
             </div>
 
-            <div id="maps" class="tab-content relative bg-zinc-900">
-                <div class="absolute inset-0 map-texture opacity-50"></div>
+            <div id="maps" class="tab-content relative bg-zinc-950 apple-map">
                 <header class="absolute top-14 left-6 right-6 z-50">
                     <div class="bg-black/40 backdrop-blur-2xl h-14 rounded-3xl border border-white/10 flex items-center px-6">
                         <i data-lucide="search" class="w-4 h-4 text-zinc-500 mr-3"></i>
@@ -87,45 +94,27 @@
                     </div>
                 </header>
             </div>
-
-            <div id="history" class="tab-content flex items-center justify-center text-zinc-700 font-bold uppercase tracking-[0.3em]">Geçmiş Analizi</div>
-            <div id="profile" class="tab-content flex items-center justify-center text-zinc-700 font-bold uppercase tracking-[0.3em]">Hesap Profili</div>
-
+            <div id="history" class="tab-content flex items-center justify-center text-zinc-700 font-bold uppercase tracking-[0.3em]">Geçmiş</div>
+            <div id="profile" class="tab-content flex items-center justify-center text-zinc-700 font-bold uppercase tracking-[0.3em]">Profil</div>
         </main>
 
         <nav class="floating-dock">
-            <button onclick="showTab('home', this)" class="nav-item active">
-                <i data-lucide="home"></i>
-            </button>
-            <button id="map-nav" onclick="showTab('maps', this)" class="nav-item">
-                <i data-lucide="map-pin"></i>
-            </button>
+            <button onclick="showTab('home', this)" class="nav-item active"><i data-lucide="home"></i></button>
+            <button id="map-nav" onclick="showTab('maps', this)" class="nav-item"><i data-lucide="map-pin"></i></button>
             <button onclick="alert('Kamera Demo')" class="nav-item">
-                <div class="bg-white/10 p-3 rounded-2xl border border-white/10 shadow-inner">
-                    <i data-lucide="camera" class="text-white"></i>
-                </div>
+                <div class="bg-white/10 p-3 rounded-2xl border border-white/10"><i data-lucide="camera" class="text-white"></i></div>
             </button>
-            <button onclick="showTab('history', this)" class="nav-item">
-                <i data-lucide="clock"></i>
-            </button>
-            <button onclick="showTab('profile', this)" class="nav-item">
-                <i data-lucide="user"></i>
-            </button>
+            <button onclick="showTab('history', this)" class="nav-item"><i data-lucide="clock"></i></button>
+            <button onclick="showTab('profile', this)" class="nav-item"><i data-lucide="user"></i></button>
         </nav>
     </div>
 
     <script>
-        // İkonları Başlat
         lucide.createIcons();
-
         window.addEventListener('load', () => { setTimeout(() => {
             document.getElementById('splash').style.opacity = '0';
-            setTimeout(() => { 
-                document.getElementById('splash').style.display = 'none'; 
-                document.getElementById('app-content').style.opacity = '1'; 
-            }, 800);
+            setTimeout(() => { document.getElementById('splash').style.display = 'none'; document.getElementById('app-content').style.opacity = '1'; }, 800);
         }, 2000); });
-
         function showTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
