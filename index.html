@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Litre - Prototip V18</title>
+    <title>Litre - Prototip V19</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { background-color: #000; color: #fff; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; overflow: hidden; }
         
-        /* 🎬 Splash Screen */
+        /* 🎬 Splash */
         #splash { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        /* 🧭 Dock & Tabs */
+        /* 🧭 Navigation */
         .floating-dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; height: 70px; background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
         .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 120px; }
         .tab-content.active { display: block; animation: slideUp 0.5s ease-out; }
@@ -21,16 +21,21 @@
         .nav-item.active { color: #fff; transform: translateY(-5px); }
         .nav-item.active::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff; }
 
-        /* 🎡 Wheel Picker (Sayaç) */
+        /* 🎡 Wheel Picker (Sayaç) Revize */
         .picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 1500; display: none; align-items: flex-end; }
-        .picker-container { background: #1c1c1e; width: 100%; border-radius: 35px 35px 0 0; padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); animation: pickerSlide 0.3s ease-out; }
+        .picker-container { background: #1c1c1e; width: 100%; border-radius: 35px 35px 0 0; padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); animation: pickerSlide 0.3s ease-out; position: relative; }
         @keyframes pickerSlide { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .wheel-picker { height: 220px; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; }
-        .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.3; transition: 0.3s; }
-        .wheel-item.selected { opacity: 1; font-weight: 800; color: #fff; font-size: 24px; }
+        
+        .wheel-wrapper { position: relative; height: 220px; width: 100%; overflow: hidden; }
+        /* Ortadaki Gri Bar (Resimdeki 33 efekti) */
+        .wheel-selection-bar { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); height: 44px; background: rgba(255, 255, 255, 0.08); border-radius: 12px; z-index: 0; pointer-events: none; }
+        
+        .wheel-picker { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; position: relative; z-index: 1; }
+        .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.3; transition: 0.3s; color: #fff; }
+        .wheel-item.selected { opacity: 1; font-weight: 700; font-size: 22px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
-        /* 🗺️ Apple Maps Effects */
+        /* 🗺️ Apple Maps */
         .apple-map { background-color: #1a1b1e; background-image: linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,0.03) 50%, transparent 50.5%), linear-gradient(0deg, transparent 49.5%, rgba(255,255,255,0.03) 50%, transparent 50.5%); background-size: 60px 60px; }
         .road-major { position: absolute; background: rgba(255,255,255,0.05); border-radius: 20px; }
         .pulse { position: absolute; width: 14px; height: 14px; background: #007AFF; border-radius: 50%; border: 2.5px solid #fff; box-shadow: 0 0 20px #007AFF; z-index: 10; }
@@ -39,7 +44,7 @@
         .price-pin { position: absolute; padding: 6px 12px; border-radius: 14px; font-weight: 800; font-size: 11px; border: 1.5px solid #fff; box-shadow: 0 8px 16px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 4px; }
         .price-pin::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #fff; }
 
-        /* 💎 UI Elements */
+        /* 💎 Global Styles */
         .glass-card { background: rgba(28, 28, 30, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .silver-grad { background: linear-gradient(145deg, #FFFFFF, #C8C8C8, #808080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
@@ -60,8 +65,11 @@
                 <h3 id="pickerTitle" class="font-bold text-lg">Seçiniz</h3>
                 <button onclick="saveSelection()" class="text-blue-500 font-bold text-sm">Bitti</button>
             </div>
-            <div id="wheel" class="wheel-picker no-scrollbar" onscroll="handleWheelScroll(this)">
-                </div>
+            <div class="wheel-wrapper">
+                <div class="wheel-selection-bar"></div>
+                <div id="wheel" class="wheel-picker no-scrollbar" onscroll="handleWheelScroll(this)">
+                    </div>
+            </div>
         </div>
     </div>
 
@@ -90,7 +98,7 @@
                                 <span class="text-[#DE2128] font-black text-[9px]">SHELL</span>
                             </div>
                             <div>
-                                <h3 class="font-bold text-gray-200 text-sm mb-2 uppercase">Shell - İçerenköy</h3>
+                                <h3 class="font-bold text-gray-200 text-sm mb-2 uppercase tracking-tight">Shell - İçerenköy</h3>
                                 <div class="space-y-1 text-xs text-zinc-400 font-medium">
                                     <p class="flex justify-between w-28">Benzin <span class="text-white font-bold">41,45 TL</span></p>
                                     <p class="flex justify-between w-28">Motorin <span class="text-white font-bold">43,30 TL</span></p>
@@ -107,7 +115,7 @@
                                 <span class="text-white font-black text-[9px]">OPET</span>
                             </div>
                             <div>
-                                <h3 class="font-bold text-gray-200 text-sm mb-2 uppercase">Opet - Küçükbakkalköy</h3>
+                                <h3 class="font-bold text-gray-200 text-sm mb-2 uppercase tracking-tight">Opet - Küçükbakkalköy</h3>
                                 <div class="space-y-1 text-xs text-zinc-400 font-medium">
                                     <p class="flex justify-between w-28">Benzin <span class="text-white font-bold">42,10 TL</span></p>
                                     <p class="flex justify-between w-28">Motorin <span class="text-white font-bold">43,50 TL</span></p>
@@ -123,10 +131,10 @@
                                 <span class="text-white font-black text-[9px]">PO</span>
                             </div>
                             <div>
-                                <h3 class="font-bold text-gray-200 text-sm mb-2 uppercase">Petrol Ofisi - E5</h3>
+                                <h3 class="font-bold text-gray-200 text-sm mb-2 uppercase tracking-tight">Petrol Ofisi - E5</h3>
                                 <div class="space-y-1 text-xs text-zinc-400 font-medium">
                                     <p class="flex justify-between w-28">Benzin <span class="text-white font-bold">42,50 TL</span></p>
-                                    <p class="flex justify-between w-28">Motorin <span class="text-white font-bold">43,90 TL</span></p>
+                                    <p class="flex justify-between w-28">Motorin <span class="text-white ml-2 font-bold">43,90 TL</span></p>
                                     <p class="flex justify-between w-28">LPG <span class="text-white font-bold">22,50 TL</span></p>
                                 </div>
                             </div>
@@ -138,7 +146,6 @@
             <div id="maps" class="tab-content relative apple-map h-full">
                 <div class="road-major w-[200%] h-4 top-[30%] left-[-50%] rotate-[-10deg]"></div>
                 <div class="road-major h-[200%] w-4 left-[65%] top-[-50%] rotate-[5deg]"></div>
-                
                 <header class="absolute top-14 left-6 right-6 z-50">
                     <div class="glass-card h-14 rounded-3xl flex items-center px-6 shadow-2xl">
                         <i data-lucide="search" class="w-4 h-4 text-zinc-500 mr-3"></i>
@@ -146,21 +153,15 @@
                         <i data-lucide="mic" class="w-4 h-4 text-zinc-500 ml-2"></i>
                     </div>
                 </header>
-
                 <div class="pulse top-[48%] left-[55%]"></div>
-                <div class="price-pin bg-[#22c55e] top-[35%] left-[25%] text-white animate-bounce"><span class="w-1 h-1 bg-white rounded-full"></span> 41.45</div>
+                <div class="price-pin bg-[#22c55e] top-[35%] left-[25%] text-white animate-bounce">41.45</div>
                 <div class="price-pin bg-[#eab308] top-[18%] right-[30%] text-white">42.10</div>
                 <div class="price-pin bg-[#ef4444] top-[65%] right-[20%] text-white">42.50</div>
-
                 <div class="absolute bottom-32 left-4 right-4 z-50">
                     <div class="glass-card p-6 rounded-[3rem] shadow-2xl">
                         <div class="flex justify-between items-start mb-4">
                             <div><h3 class="text-xl font-bold">Shell - İçerenköy</h3><p class="text-xs text-zinc-500 font-medium mt-1">0.8 km · 3 dk sürüş</p></div>
                             <div class="bg-[#007AFF] w-14 h-14 rounded-full flex items-center justify-center shadow-blue-500/40 shadow-xl"><i data-lucide="navigation" class="w-6 h-6 text-white"></i></div>
-                        </div>
-                        <div class="flex gap-3">
-                            <div class="bg-zinc-800/60 p-3 rounded-2xl flex-1 border border-white/5"><p class="text-[9px] text-zinc-500 font-black uppercase">BENZİN</p><p class="text-sm font-bold">41.45 TL</p></div>
-                            <div class="bg-zinc-800/60 p-3 rounded-2xl flex-1 border border-white/5"><p class="text-[9px] text-zinc-500 font-black uppercase">MOTORİN</p><p class="text-sm font-bold">43.30 TL</p></div>
                         </div>
                     </div>
                 </div>
@@ -175,7 +176,6 @@
 
                 <div class="glass-card p-8 rounded-[3.5rem] space-y-8 shadow-2xl">
                     <div class="flex justify-between items-center"><h3 class="text-xs font-black text-zinc-500 tracking-[0.2em] uppercase">Aracım</h3><i data-lucide="car-front" class="w-4 h-4 text-zinc-700"></i></div>
-                    
                     <div class="space-y-6">
                         <div onclick="openPicker('Marka')" class="bg-black/50 p-6 rounded-3xl border border-white/5 active:scale-95 transition-all">
                             <p class="text-[10px] text-zinc-600 font-black uppercase tracking-tighter mb-1">Marka</p>
@@ -191,11 +191,10 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="p-6 rounded-[2.5rem] border border-red-900/10 bg-red-950/5 text-red-500 font-black text-xs tracking-widest text-center">OTURUMU KAPAT</div>
             </div>
 
-            <div id="history" class="tab-content flex items-center justify-center p-6"><p class="text-zinc-700 font-black uppercase tracking-widest italic">Harcama Analizi Yakında</p></div>
+            <div id="history" class="tab-content flex items-center justify-center p-6"><p class="text-zinc-700 font-black uppercase tracking-widest italic">Harcama Analizi</p></div>
         </main>
 
         <nav class="floating-dock">
@@ -211,62 +210,36 @@
         lucide.createIcons();
         
         const carData = {
-            'Audi': ['A3', 'A4', 'A6', 'A8', 'Q5'],
-            'BMW': ['1 Serisi', '3 Serisi', '5 Serisi', 'X3', 'X5'],
-            'BYD': ['Atto 3', 'Dolphin', 'Seal', 'Han', 'Tang'],
-            'Chevrolet': ['Aveo', 'Cruze', 'Malibu', 'Camaro', 'Captiva'],
-            'Citroën': ['C3', 'C4', 'C5', 'C4 Picasso', 'C5 Aircross'],
-            'Dacia': ['Logan', 'Sandero', 'Duster', 'Lodgy', 'Jogger'],
-            'Ferrari': ['488', 'F8', 'Roma', 'California', 'Portofino'],
-            'Fiat': ['Egea', 'Linea', 'Punto', 'Bravo', '500'],
-            'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Kuga', 'Mustang'],
-            'Honda': ['Civic', 'Accord', 'Jazz', 'CR-V', 'HR-V'],
-            'Hyundai': ['i20', 'i30', 'Elantra', 'Tucson', 'Santa Fe'],
-            'Jaguar': ['XE', 'XF', 'XJ', 'F-Pace', 'E-Pace'],
-            'Kia': ['Rio', 'Ceed', 'Cerato', 'Sportage', 'Sorento'],
-            'Lamborghini': ['Huracan', 'Aventador', 'Gallardo', 'Urus', 'Murciélago'],
-            'Land Rover': ['Discovery', 'Range Rover', 'Range Rover Sport', 'Evoque', 'Defender'],
-            'Lexus': ['IS', 'ES', 'GS', 'NX', 'RX'],
-            'Maserati': ['Ghibli', 'Quattroporte', 'Levante', 'GranTurismo', 'GranCabrio'],
-            'Mazda': ['Mazda 2', 'Mazda 3', 'Mazda 6', 'CX-3', 'CX-5'],
-            'Mercedes-Benz': ['A Serisi', 'C Serisi', 'E Serisi', 'S Serisi', 'GLC'],
-            'Mitsubishi': ['Lancer', 'Colt', 'ASX', 'Outlander', 'Pajaro'],
-            'Nissan': ['Micra', 'Almera', 'Qashqai', 'X-Trail', 'Juke'],
-            'Opel': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland'],
-            'Peugeot': ['208', '308', '3008', '5008', '508'],
-            'Porsche': ['911', 'Cayenne', 'Panamera', 'Macan', 'Taycan'],
-            'Renault': ['Clio', 'Megane', 'Talisman', 'Captur', 'Kadjar'],
-            'Seat': ['Ibiza', 'Leon', 'Toledo', 'Ateca', 'Arona'],
-            'Skoda': ['Fabia', 'Octavia', 'Superb', 'Karoq', 'Kodiaq'],
-            'Subaru': ['Impreza', 'Legacy', 'Forester', 'Outback', 'XV'],
-            'Suzuki': ['Swift', 'Vitara', 'Jimny', 'S-Cross', 'Ignis'],
-            'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Roadster'],
-            'Toyota': ['Corolla', 'Yaris', 'Camry', 'C-HR', 'RAV4'],
-            'Volkswagen': ['Polo', 'Golf', 'Passat', 'Tiguan', 'Jetta'],
+            'Audi': ['A3', 'A4', 'A6', 'A8', 'Q5'], 'BMW': ['1 Serisi', '3 Serisi', '5 Serisi', 'X3', 'X5'],
+            'BYD': ['Atto 3', 'Dolphin', 'Seal', 'Han', 'Tang'], 'Chevrolet': ['Aveo', 'Cruze', 'Malibu', 'Camaro', 'Captiva'],
+            'Citroën': ['C3', 'C4', 'C5', 'C4 Picasso', 'C5 Aircross'], 'Dacia': ['Logan', 'Sandero', 'Duster', 'Lodgy', 'Jogger'],
+            'Ferrari': ['488', 'F8', 'Roma', 'California', 'Portofino'], 'Fiat': ['Egea', 'Linea', 'Punto', 'Bravo', '500'],
+            'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Kuga', 'Mustang'], 'Honda': ['Civic', 'Accord', 'Jazz', 'CR-V', 'HR-V'],
+            'Hyundai': ['i20', 'i30', 'Elantra', 'Tucson', 'Santa Fe'], 'Jaguar': ['XE', 'XF', 'XJ', 'F-Pace', 'E-Pace'],
+            'Kia': ['Rio', 'Ceed', 'Cerato', 'Sportage', 'Sorento'], 'Lamborghini': ['Huracan', 'Aventador', 'Gallardo', 'Urus', 'Murciélago'],
+            'Land Rover': ['Discovery', 'Range Rover', 'Range Rover Sport', 'Evoque', 'Defender'], 'Lexus': ['IS', 'ES', 'GS', 'NX', 'RX'],
+            'Maserati': ['Ghibli', 'Quattroporte', 'Levante', 'GranTurismo', 'GranCabrio'], 'Mazda': ['Mazda 2', 'Mazda 3', 'Mazda 6', 'CX-3', 'CX-5'],
+            'Mercedes-Benz': ['A Serisi', 'C Serisi', 'E Serisi', 'S Serisi', 'GLC'], 'Mitsubishi': ['Lancer', 'Colt', 'ASX', 'Outlander', 'Pajaro'],
+            'Nissan': ['Micra', 'Almera', 'Qashqai', 'X-Trail', 'Juke'], 'Opel': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland'],
+            'Peugeot': ['208', '308', '3008', '5008', '508'], 'Porsche': ['911', 'Cayenne', 'Panamera', 'Macan', 'Taycan'],
+            'Renault': ['Clio', 'Megane', 'Talisman', 'Captur', 'Kadjar'], 'Seat': ['Ibiza', 'Leon', 'Toledo', 'Ateca', 'Arona'],
+            'Skoda': ['Fabia', 'Octavia', 'Superb', 'Karoq', 'Kodiaq'], 'Subaru': ['Impreza', 'Legacy', 'Forester', 'Outback', 'XV'],
+            'Suzuki': ['Swift', 'Vitara', 'Jimny', 'S-Cross', 'Ignis'], 'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Roadster'],
+            'Toyota': ['Corolla', 'Yaris', 'Camry', 'C-HR', 'RAV4'], 'Volkswagen': ['Polo', 'Golf', 'Passat', 'Tiguan', 'Jetta'],
             'Volvo': ['S60', 'S90', 'XC40', 'XC60', 'XC90']
         };
 
         const years = Array.from({length: 2026-1990+1}, (_, i) => (2026-i).toString());
-
-        let activeType = '';
-        let currentSelection = '';
-        let selectedMarka = 'Seçiniz';
+        let activeType = '', currentSelection = '', selectedMarka = 'Seçiniz';
 
         function openPicker(type) {
             activeType = type;
             const wheel = document.getElementById('wheel');
             document.getElementById('pickerTitle').innerText = type + ' Seç';
-            wheel.innerHTML = '<div class="h-20"></div>';
-            
-            let data = [];
-            if(type === 'Marka') data = Object.keys(carData);
-            else if(type === 'Model') data = carData[selectedMarka] || ['Önce Marka Seçiniz'];
-            else data = years;
-
-            data.forEach(item => {
-                wheel.innerHTML += `<div class="wheel-item">${item}</div>`;
-            });
-            wheel.innerHTML += '<div class="h-20"></div>';
+            wheel.innerHTML = '<div style="height: 88px;"></div>'; // Center offset
+            let data = type === 'Marka' ? Object.keys(carData) : type === 'Model' ? carData[selectedMarka] || ['Önce Marka Seç'] : years;
+            data.forEach(item => wheel.innerHTML += `<div class="wheel-item">${item}</div>`);
+            wheel.innerHTML += '<div style="height: 88px;"></div>'; // Center offset
             document.getElementById('pickerOverlay').style.display = 'flex';
         }
 
@@ -275,32 +248,21 @@
             const center = el.scrollTop + 110;
             for (let item of items) {
                 if (Math.abs(center - item.offsetTop - 22) < 22) {
-                    item.classList.add('selected');
-                    currentSelection = item.innerText;
-                } else {
-                    item.classList.remove('selected');
-                }
+                    item.classList.add('selected'); currentSelection = item.innerText;
+                } else { item.classList.remove('selected'); }
             }
         }
 
         function saveSelection() {
             if(currentSelection) {
                 document.getElementById('display' + activeType).innerText = currentSelection;
-                if(activeType === 'Marka') {
-                    selectedMarka = currentSelection;
-                    document.getElementById('displayModel').innerText = 'Seçiniz'; // Marka değişince model sıfırlanır
-                }
+                if(activeType === 'Marka') { selectedMarka = currentSelection; document.getElementById('displayModel').innerText = 'Seçiniz'; }
             }
             closePicker();
         }
 
         function closePicker() { document.getElementById('pickerOverlay').style.display = 'none'; }
-
-        window.addEventListener('load', () => { setTimeout(() => {
-            document.getElementById('splash').style.opacity = '0';
-            setTimeout(() => { document.getElementById('splash').style.display = 'none'; document.getElementById('app-content').style.opacity = '1'; }, 800);
-        }, 2000); });
-
+        window.addEventListener('load', () => { setTimeout(() => { document.getElementById('splash').style.opacity = '0'; setTimeout(() => { document.getElementById('splash').style.display = 'none'; document.getElementById('app-content').style.opacity = '1'; }, 800); }, 2000); });
         function showTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
