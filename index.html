@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Litre - Prototip V22</title>
+    <title>Litre - Prototip V23</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -26,24 +26,25 @@
         .picker-container { background: #1c1c1e; width: 100%; border-radius: 35px 35px 0 0; padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); animation: pickerSlide 0.3s cubic-bezier(0.1, 0.7, 0.1, 1); }
         @keyframes pickerSlide { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .wheel-wrapper { position: relative; height: 220px; width: 100%; overflow: hidden; }
-        /* Ortadaki Gri Bar (Resimdeki 33 dk örneği) */
-        .wheel-selection-bar { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); height: 48px; background: rgba(255, 255, 255, 0.08); border-radius: 14px; z-index: 0; pointer-events: none; border: 1px solid rgba(255,255,255,0.03); }
+        .wheel-selection-bar { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); height: 48px; background: rgba(255, 255, 255, 0.08); border-radius: 14px; z-index: 0; pointer-events: none; border: 1px solid rgba(255, 255, 255, 0.03); }
         .wheel-picker { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; position: relative; z-index: 1; }
         .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 19px; opacity: 0.25; transition: 0.3s; color: #fff; }
         .wheel-item.selected { opacity: 1; font-weight: 700; font-size: 23px; color: #fff; }
 
-        /* 🗺️ Apple Maps Style */
-        .apple-map-view { position: relative; width: 100%; height: 100%; background: #111; overflow: hidden; }
-        .map-layer { position: absolute; width: 400%; height: 400%; left: -150%; top: -150%; background-color: #1a1b1e; background-image: radial-gradient(circle at 2px 2px, #333 1px, transparent 0); background-size: 40px 40px; transform-origin: center; transition: transform 0.05s linear; }
-        .map-label { position: absolute; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 2px; }
+        /* 🗺️ Premium Apple Map Layer */
+        .apple-map-canvas { position: relative; width: 100%; height: 100%; background: #111; overflow: hidden; touch-action: none; }
+        .map-interactive { position: absolute; width: 500%; height: 500%; left: -200%; top: -200%; background-color: #1a1b1e; background-image: radial-gradient(circle at 2px 2px, #333 1px, transparent 0); background-size: 40px 40px; transform-origin: center; cursor: grab; transition: transform 0.05s linear; }
+        .map-interactive:active { cursor: grabbing; }
+        .map-label { position: absolute; font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.12); text-transform: uppercase; letter-spacing: 2px; }
         
-        .pulse { position: absolute; width: 16px; height: 16px; background: #007AFF; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 25px #007AFF; z-index: 10; transform: translate(-50%, -50%); }
-        .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; background: #007AFF; opacity: 0.3; animation: ping 2.5s infinite; }
+        .pulse { position: absolute; width: 18px; height: 18px; background: #007AFF; border-radius: 50%; border: 3.5px solid #fff; box-shadow: 0 0 30px #007AFF; z-index: 10; transform: translate(-50%, -50%); }
+        .pulse::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: #007AFF; opacity: 0.3; animation: ping 2.5s infinite; }
         @keyframes ping { 75%, 100% { transform: scale(3.5); opacity: 0; } }
 
-        .price-pin { position: absolute; padding: 6px 12px; border-radius: 14px; font-weight: 800; font-size: 11px; border: 1.5px solid #fff; box-shadow: 0 8px 16px rgba(0,0,0,0.4); transform: translate(-50%, -50%); }
+        .price-pin { position: absolute; padding: 7px 14px; border-radius: 16px; font-weight: 800; font-size: 12px; border: 1.5px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; }
+        .price-pin::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid #fff; }
 
-        /* 💎 UI Elements */
+        /* 💎 UI & Scroll Fix */
         .glass-card { background: rgba(28, 28, 30, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.06); }
         .silver-grad { background: linear-gradient(145deg, #FFFFFF, #C8C8C8, #808080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -54,7 +55,7 @@
 
     <div id="splash">
         <svg width="90" height="120" viewBox="0 0 100 130" class="mb-4">
-            <path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="white" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <h1 class="text-5xl font-bold text-white tracking-tight">Litre</h1>
     </div>
@@ -76,7 +77,7 @@
     <div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-1000">
         <main class="flex-1 overflow-hidden relative">
             
-            <div id="home" class="tab-content active p-6 pt-10 space-y-7 no-scrollbar pb-40">
+            <div id="home" class="tab-content active p-6 pt-10 space-y-7 no-scrollbar pb-44">
                 <header class="flex justify-center items-center py-4">
                     <div class="flex items-center gap-2">
                         <svg width="22" height="30" viewBox="0 0 100 130">
@@ -86,7 +87,7 @@
                     </div>
                 </header>
                 
-                <h1 class="text-3xl font-bold silver-grad leading-tight">Yakınımdaki<br>Fiyatlar</h1>
+                <h1 class="text-3xl font-bold silver-grad leading-tight">Yakınımdaki Fiyatlar</h1>
 
                 <div onclick="showTab('maps', document.getElementById('map-nav'))" class="w-full h-64 bg-zinc-900 rounded-[3.5rem] border border-white/10 relative overflow-hidden shadow-2xl active:scale-[0.98] transition-all">
                     <div class="road-major w-[150%] h-3 top-1/2 left-[-25%] rotate-[15deg] opacity-20"></div>
@@ -97,20 +98,20 @@
                 </div>
 
                 <div class="flex justify-center">
-                    <div class="flex items-center gap-2.5 px-6 py-3 bg-zinc-900/60 backdrop-blur-xl rounded-full border border-white/5 shadow-2xl">
+                    <div class="flex items-center gap-2.5 px-6 py-3 bg-zinc-900/60 backdrop-blur-xl rounded-full border border-white/5">
                         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-500"></i>
                         <span class="text-[10px] font-black text-zinc-300 uppercase tracking-[0.15em]">Mevcut Konum: Kartal, İstanbul</span>
                     </div>
                 </div>
 
                 <div class="space-y-6">
-                    <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between border border-white/5 shadow-xl">
+                    <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between border border-white/5">
                         <div class="flex items-start gap-5">
                             <div class="w-14 h-14 bg-[#FFD500] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800 shadow-md">
                                 <span class="text-[#DE2128] font-black text-[9px]">SHELL</span>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-gray-200 text-sm mb-2 uppercase tracking-tight">Shell - İçerenköy</h3>
+                            <div class="space-y-2">
+                                <h3 class="font-bold text-gray-200 text-sm uppercase tracking-tight">Shell - İçerenköy</h3>
                                 <div class="space-y-1.5 text-xs text-zinc-400 font-medium">
                                     <p class="flex justify-between w-32">Benzin <span class="text-white ml-2 font-bold">41,45 TL</span></p>
                                     <p class="flex justify-between w-32">Motorin <span class="text-white ml-2 font-bold">43,30 TL</span></p>
@@ -119,6 +120,38 @@
                             </div>
                         </div>
                         <i data-lucide="chevron-right" class="w-5 h-5 text-zinc-700 self-center"></i>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between border border-white/5">
+                        <div class="flex items-start gap-5">
+                            <div class="w-14 h-14 bg-[#005BAB] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800">
+                                <span class="text-white font-black text-[9px]">OPET</span>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="font-bold text-gray-200 text-sm uppercase tracking-tight">Opet - Küçükyalı</h3>
+                                <div class="space-y-1.5 text-xs text-zinc-400 font-medium">
+                                    <p class="flex justify-between w-32">Benzin <span class="text-white ml-2 font-bold">42,10 TL</span></p>
+                                    <p class="flex justify-between w-32">Motorin <span class="text-white ml-2 font-bold">43,50 TL</span></p>
+                                    <p class="flex justify-between w-32">LPG <span class="text-white ml-2 font-bold">22,00 TL</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between border border-white/5">
+                        <div class="flex items-start gap-5">
+                            <div class="w-14 h-14 bg-[#DE2128] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800">
+                                <span class="text-white font-black text-[9px]">PO</span>
+                            </div>
+                            <div class="space-y-2">
+                                <h3 class="font-bold text-gray-200 text-sm uppercase tracking-tight">Petrol Ofisi - Kartal</h3>
+                                <div class="space-y-1.5 text-xs text-zinc-400 font-medium">
+                                    <p class="flex justify-between w-32">Benzin <span class="text-white ml-2 font-bold">42,50 TL</span></p>
+                                    <p class="flex justify-between w-32">Motorin <span class="text-white ml-2 font-bold">43,90 TL</span></p>
+                                    <p class="flex justify-between w-32">LPG <span class="text-white ml-2 font-bold">22,50 TL</span></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -132,23 +165,26 @@
                     </div>
                 </header>
 
-                <div class="apple-map-view" id="mapContainer">
-                    <div class="map-layer" id="mapLayer">
-                        <span class="map-label" style="top:40%; left:45%">KAĞITHANE</span>
-                        <span class="map-label" style="top:48%; left:50%">BEŞİKTAŞ</span>
-                        <span class="map-label" style="top:55%; left:52%">KADIKÖY</span>
-                        <span class="map-label" style="top:42%; left:58%">MASLAK</span>
-                        <div class="road-major w-[300%] h-4 top-1/2 left-[-100%] rotate-[-15deg]"></div>
-                        <div class="road-major h-[300%] w-4 left-[60%] top-[-100%] rotate-[10deg]"></div>
-                        <div class="pulse" style="top:50%; left:50%"></div>
-                        <div class="price-pin bg-[#22c55e] text-white" style="top:45%; left:42%">41.45</div>
-                        <div class="price-pin bg-[#eab308] text-white" style="top:35%; left:55%">42.10</div>
-                        <div class="price-pin bg-[#ef4444] text-white" style="top:60%; left:48%">42.50</div>
+                <div class="apple-map-canvas" id="mapContainer">
+                    <div class="map-interactive" id="mapLayer">
+                        <span class="map-label" style="top:42%; left:48%">ŞİŞLİ</span>
+                        <span class="map-label" style="top:47%; left:51%">BEŞİKTAŞ</span>
+                        <span class="map-label" style="top:54%; left:53%">KADIKÖY</span>
+                        <span class="map-label" style="top:58%; left:58%">PENDİK</span>
+                        <span class="map-label" style="top:40%; left:56%">SARIYER</span>
+                        
+                        <div class="road-major w-[300%] h-4 top-1/2 left-[-100%] rotate-[-12deg]"></div>
+                        <div class="road-major h-[300%] w-4 left-[54%] top-[-100%] rotate-[6deg]"></div>
+                        
+                        <div class="pulse" id="userLocation" style="top:50%; left:50%"></div>
+                        <div class="price-pin bg-[#22c55e] text-white" style="top:46%; left:43%"><span class="w-1.5 h-1.5 bg-white rounded-full"></span>41.45</div>
+                        <div class="price-pin bg-[#eab308] text-white" style="top:38%; left:55%">42.10</div>
+                        <div class="price-pin bg-[#ef4444] text-white" style="top:62%; left:50%">42.50</div>
                     </div>
                 </div>
 
                 <div class="absolute bottom-32 left-5 right-5 z-[60]">
-                    <div class="glass-card p-6 rounded-[3rem] shadow-2xl">
+                    <div class="glass-card p-6 rounded-[3rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
                         <div class="flex justify-between items-start mb-5">
                             <div><h3 class="text-xl font-bold">Shell - İçerenköy</h3><p class="text-[11px] text-zinc-500 font-bold mt-1">0.8 km · 3 dk sürüş</p></div>
                             <div class="bg-[#007AFF] w-14 h-14 rounded-full flex items-center justify-center shadow-blue-500/40 shadow-2xl"><i data-lucide="navigation" class="w-6 h-6 text-white fill-white"></i></div>
@@ -161,37 +197,32 @@
                 </div>
             </div>
 
-            <div id="profile" class="tab-content p-6 pt-14 space-y-10 no-scrollbar pb-40">
+            <div id="profile" class="tab-content p-6 pt-14 space-y-10 no-scrollbar pb-44">
                 <div class="flex flex-col items-center">
                     <div class="w-24 h-24 bg-zinc-900 rounded-full border border-white/10 flex items-center justify-center text-5xl mb-4 shadow-2xl">👤</div>
                     <h2 class="text-2xl font-bold silver-grad">Mevlüt Yılmaz</h2>
-                    <div class="mt-1.5 px-4 py-1.5 bg-zinc-900/80 rounded-full border border-white/5 text-[9px] font-black tracking-[0.2em] text-zinc-500 uppercase">Premium Member</div>
+                    <div class="mt-1.5 px-4 py-1.5 bg-zinc-900/80 rounded-full border border-white/5 text-[9px] font-black tracking-widest text-zinc-500 uppercase">Premium Member</div>
                 </div>
 
                 <div class="glass-card p-8 rounded-[3.5rem] space-y-8">
                     <div class="flex justify-between items-center"><h3 class="text-xs font-black text-zinc-500 tracking-[0.2em] uppercase">Garajım</h3><i data-lucide="car-front" class="w-4 h-4 text-zinc-700"></i></div>
                     <div class="space-y-6">
-                        <div onclick="openPicker('Marka')" class="bg-black/40 p-6 rounded-[1.8rem] border border-white/5 active:scale-95 transition-all"><p class="text-[10px] text-zinc-600 font-black uppercase mb-1">Marka</p><p id="displayMarka" class="text-lg font-bold">Seçiniz</p></div>
-                        <div onclick="openPicker('Model')" class="bg-black/40 p-6 rounded-[1.8rem] border border-white/5 active:scale-95 transition-all"><p class="text-[10px] text-zinc-600 font-black uppercase mb-1">Model</p><p id="displayModel" class="text-lg font-bold">Seçiniz</p></div>
-                        <div onclick="openPicker('Yıl')" class="bg-black/50 p-6 rounded-[1.8rem] border border-white/5 active:scale-95 transition-all"><p class="text-[10px] text-zinc-600 font-black uppercase mb-1">Model Yılı</p><p id="displayYıl" class="text-lg font-bold">Seçiniz</p></div>
+                        <div onclick="openPicker('Marka')" class="bg-black/40 p-6 rounded-[1.8rem] border border-white/5 active:scale-95 transition-all"><p class="text-[10px] text-zinc-600 font-black uppercase tracking-tighter mb-1">Marka</p><p id="displayMarka" class="text-lg font-bold">Seçiniz</p></div>
+                        <div onclick="openPicker('Model')" class="bg-black/40 p-6 rounded-[1.8rem] border border-white/5 active:scale-95 transition-all"><p class="text-[10px] text-zinc-600 font-black uppercase tracking-tighter mb-1">Model</p><p id="displayModel" class="text-lg font-bold">Seçiniz</p></div>
+                        <div onclick="openPicker('Yıl')" class="bg-black/50 p-6 rounded-[1.8rem] border border-white/5 active:scale-95 transition-all"><p class="text-[10px] text-zinc-600 font-black uppercase tracking-tighter mb-1">Model Yılı</p><p id="displayYıl" class="text-lg font-bold">Seçiniz</p></div>
                     </div>
                 </div>
 
-                <div class="glass-card p-3 rounded-[2.5rem] space-y-1 shadow-2xl">
-                    <div class="flex items-center justify-between p-4 rounded-2xl active:bg-white/5 transition-colors menu-item">
+                <div class="glass-card p-3 rounded-[2.5rem] space-y-1">
+                    <div class="flex items-center justify-between p-4 rounded-2xl active:bg-white/5 menu-item">
                         <div class="flex items-center gap-4 text-zinc-300"><i data-lucide="archive" class="w-5 h-5 opacity-40"></i><span class="text-sm font-medium">Yakıt Geçmişi</span></div>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-800"></i>
                     </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl active:bg-white/5 transition-colors menu-item">
+                    <div class="flex items-center justify-between p-4 rounded-2xl active:bg-white/5 menu-item">
                         <div class="flex items-center gap-4 text-zinc-300"><i data-lucide="bell-ring" class="w-5 h-5 opacity-40"></i><span class="text-sm font-medium">Bildirim Ayarları</span></div>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-800"></i>
                     </div>
-                    <div class="flex items-center justify-between p-4 rounded-2xl active:bg-white/5 transition-colors menu-item">
-                        <div class="flex items-center gap-4 text-zinc-300"><i data-lucide="help-circle" class="w-5 h-5 opacity-40"></i><span class="text-sm font-medium">Yardım Merkezi</span></div>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-800"></i>
-                    </div>
                 </div>
-                <div class="p-6 rounded-[2.5rem] border border-red-900/10 bg-red-950/5 text-red-500 font-black text-xs tracking-widest text-center active:scale-95 transition-all">OTURUMU KAPAT</div>
             </div>
 
             <div id="history" class="tab-content flex items-center justify-center p-6 text-zinc-800 uppercase font-black tracking-[0.3em]">Harcama Analizi</div>
@@ -209,12 +240,12 @@
     <script>
         lucide.createIcons();
         
-        // --- ARAÇ LİSTESİ ---
+        // --- DATA ---
         const carData = { 'Audi': ['A3', 'A4', 'A6', 'A8', 'Q5'], 'BMW': ['1 Serisi', '3 Serisi', '5 Serisi', 'X3', 'X5'], 'BYD': ['Atto 3', 'Dolphin', 'Seal', 'Han', 'Tang'], 'Chevrolet': ['Aveo', 'Cruze', 'Malibu', 'Camaro', 'Captiva'], 'Citroën': ['C3', 'C4', 'C5', 'C4 Picasso', 'C5 Aircross'], 'Dacia': ['Logan', 'Sandero', 'Duster', 'Lodgy', 'Jogger'], 'Ferrari': ['488', 'F8', 'Roma', 'California', 'Portofino'], 'Fiat': ['Egea', 'Linea', 'Punto', 'Bravo', '500'], 'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Kuga', 'Mustang'], 'Honda': ['Civic', 'Accord', 'Jazz', 'CR-V', 'HR-V'], 'Hyundai': ['i20', 'i30', 'Elantra', 'Tucson', 'Santa Fe'], 'Jaguar': ['XE', 'XF', 'XJ', 'F-Pace', 'E-Pace'], 'Kia': ['Rio', 'Ceed', 'Cerato', 'Sportage', 'Sorento'], 'Lamborghini': ['Huracan', 'Aventador', 'Gallardo', 'Urus', 'Murciélago'], 'Land Rover': ['Discovery', 'Range Rover', 'Range Rover Sport', 'Evoque', 'Defender'], 'Lexus': ['IS', 'ES', 'GS', 'NX', 'RX'], 'Maserati': ['Ghibli', 'Quattroporte', 'Levante', 'GranTurismo', 'GranCabrio'], 'Mazda': ['Mazda 2', 'Mazda 3', 'Mazda 6', 'CX-3', 'CX-5'], 'Mercedes-Benz': ['A Serisi', 'C Serisi', 'E Serisi', 'S Serisi', 'GLC'], 'Mitsubishi': ['Lancer', 'Colt', 'ASX', 'Outlander', 'Pajaro'], 'Nissan': ['Micra', 'Almera', 'Qashqai', 'X-Trail', 'Juke'], 'Opel': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland'], 'Peugeot': ['208', '308', '3008', '5008', '508'], 'Porsche': ['911', 'Cayenne', 'Panamera', 'Macan', 'Taycan'], 'Renault': ['Clio', 'Megane', 'Talisman', 'Captur', 'Kadjar'], 'Seat': ['Ibiza', 'Leon', 'Toledo', 'Ateca', 'Arona'], 'Skoda': ['Fabia', 'Octavia', 'Superb', 'Karoq', 'Kodiaq'], 'Subaru': ['Impreza', 'Legacy', 'Forester', 'Outback', 'XV'], 'Suzuki': ['Swift', 'Vitara', 'Jimny', 'S-Cross', 'Ignis'], 'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Roadster'], 'Toyota': ['Corolla', 'Yaris', 'Camry', 'C-HR', 'RAV4'], 'Volkswagen': ['Polo', 'Golf', 'Passat', 'Tiguan', 'Jetta'], 'Volvo': ['S60', 'S90', 'XC40', 'XC60', 'XC90'] };
         const years = Array.from({length: 2026-1990+1}, (_, i) => (2026-i).toString());
         let activeType = '', currentSelection = '', selectedMarka = 'Seçiniz';
 
-        // --- PICKER ---
+        // --- PICKER MANTIĞI ---
         function openPicker(type) {
             activeType = type;
             const wheel = document.getElementById('wheel');
@@ -242,7 +273,7 @@
         }
         function closePicker() { document.getElementById('pickerOverlay').style.display = 'none'; }
 
-        // --- HARİTA ZOOM & PAN ---
+        // --- HARİTA ZOOM & PAN (İstanbul Detaylı) ---
         let scale = 1, currentX = -50, currentY = -50, startX = 0, startY = 0;
         const mapLayer = document.getElementById('mapLayer');
         const mapContainer = document.getElementById('mapContainer');
@@ -250,30 +281,25 @@
         mapContainer.addEventListener('wheel', e => {
             e.preventDefault();
             scale += e.deltaY * -0.001;
-            scale = Math.min(Math.max(.5, scale), 3);
+            scale = Math.min(Math.max(0.5, scale), 3);
             mapLayer.style.transform = `scale(${scale}) translate(${currentX}px, ${currentY}px)`;
         });
 
+        const handlePanStart = (x, y) => { startX = x - currentX; startY = y - currentY; };
+        const handlePanMove = (x, y) => {
+            currentX = x - startX; currentY = y - startY;
+            mapLayer.style.transform = `scale(${scale}) translate(${currentX}px, ${currentY}px)`;
+        };
+
         mapContainer.addEventListener('mousedown', e => {
-            startX = e.pageX - currentX; startY = e.pageY - currentY;
-            const move = ev => {
-                currentX = ev.pageX - startX; currentY = ev.pageY - startY;
-                mapLayer.style.transform = `scale(${scale}) translate(${currentX}px, ${currentY}px)`;
-            };
+            handlePanStart(e.pageX, e.pageY);
+            const move = ev => handlePanMove(ev.pageX, ev.pageY);
             window.addEventListener('mousemove', move);
             window.addEventListener('mouseup', () => window.removeEventListener('mousemove', move), {once:true});
         });
 
-        // Dokunmatik zoom simülasyonu
-        mapContainer.addEventListener('touchstart', e => {
-            if(e.touches.length === 1) { startX = e.touches[0].pageX - currentX; startY = e.touches[0].pageY - currentY; }
-        });
-        mapContainer.addEventListener('touchmove', e => {
-            if(e.touches.length === 1) {
-                currentX = e.touches[0].pageX - startX; currentY = e.touches[0].pageY - startY;
-                mapLayer.style.transform = `scale(${scale}) translate(${currentX}px, ${currentY}px)`;
-            }
-        });
+        mapContainer.addEventListener('touchstart', e => { if(e.touches.length === 1) handlePanStart(e.touches[0].pageX, e.touches[0].pageY); });
+        mapContainer.addEventListener('touchmove', e => { if(e.touches.length === 1) handlePanMove(e.touches[0].pageX, e.touches[0].pageY); });
 
         // --- GENEL ---
         window.addEventListener('load', () => { setTimeout(() => {
