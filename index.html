@@ -6,111 +6,118 @@
     <title>Litre - Prototip</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #000; color: #fff; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         #splash { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.6s ease-in-out; }
-        .tab-content { display: none; }
+        .tab-content { display: none; height: 100%; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .nav-item { color: #555; transition: 0.3s; }
-        .nav-item.active { color: #fff; border-bottom: 2px solid #fff; }
+        .nav-item.active { color: #fff; }
+        .silver-text { background: linear-gradient(145deg, #FFFFFF, #C8C8C8, #808080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="max-w-md mx-auto h-screen flex flex-col overflow-hidden bg-black">
+<body class="max-w-md mx-auto h-screen flex flex-col overflow-hidden bg-black text-white">
 
     <div id="splash">
         <svg width="100" height="130" viewBox="0 0 100 130" class="mb-2">
-            <defs><linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FFFFFF" /><stop offset="50%" style="stop-color:#C8C8C8" /><stop offset="100%" style="stop-color:#808080" /></linearGradient></defs>
-            <path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="url(#silverGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <h1 class="text-5-xl font-bold text-white tracking-tight">Litre</h1>
+        <h1 class="text-5xl font-bold tracking-tight">Litre</h1>
     </div>
 
     <div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-700">
         
-        <header class="p-6 pt-10 flex justify-between items-start">
-            <div>
-                <h2 class="text-lg font-bold text-gray-200">Atașehir <span class="text-xs font-normal text-gray-500 ml-1">(Otematik)</span></h2>
-            </div>
-            <div class="p-2 bg-zinc-900 rounded-lg border border-white/5">⚙️</div>
-        </header>
-
-        <main class="flex-1 overflow-y-auto px-5 pb-24">
+        <main class="flex-1 overflow-hidden relative">
             
-            <div id="home" class="tab-content active space-y-6">
-                <h1 class="text-xl font-bold text-white tracking-tight">Yakinimdaki Fiyatlar</h1>
-
-                <div class="w-full h-52 bg-[#E5E5E5] rounded-[2rem] relative overflow-hidden border border-white/10 shadow-inner">
-                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#999 1px, transparent 1px); background-size: 20px 20px;"></div>
-                    <div class="absolute top-[40%] left-[35%] w-4 h-4 bg-[#4A90E2] rounded-full border-2 border-white shadow-md"></div> <div class="absolute top-[25%] left-[55%] w-6 h-8 bg-[#417505] rounded-t-full rounded-b-lg border-2 border-white shadow-lg flex items-center justify-center">
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                    </div> <div class="absolute bottom-[20%] right-[30%] w-6 h-8 bg-[#D0021B] rounded-t-full rounded-b-lg border-2 border-white shadow-lg flex items-center justify-center">
-                        <div class="w-2 h-2 bg-white rounded-full"></div>
-                    </div> </div>
-
-                <p class="text-sm text-gray-400 font-medium ml-1 italic opacity-80">1.2 km yak nlarda 8 istasyon bulundu</p>
-
-                <div class="space-y-4">
-                    <div class="bg-zinc-900/60 p-5 rounded-[2.5rem] flex items-center justify-between border border-white/5">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-[#F5A623] rounded-full flex items-center justify-center p-2 border-2 border-zinc-800">
-                                <span class="text-[8px] text-white font-black uppercase">Shell</span>
-                            </div>
-                            <div class="space-y-1">
-                                <h3 class="text-sm font-bold text-gray-200">Sheil - Icerenköy</h3>
-                                <div class="text-xs text-gray-400 space-y-0.5">
-                                    <p>Benzin <span class="text-white ml-2">41,45 TL</span></p>
-                                    <p>Motorin <span class="text-white ml-2">43,30 TL</span></p>
-                                    <p>LPG <span class="text-white ml-2">21,50 TL</span></p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="bg-zinc-800 text-gray-300 px-6 py-3 rounded-2xl text-xs font-bold shadow-lg">Git ></button>
+            <div id="home" class="tab-content active overflow-y-auto p-6 pt-12 space-y-6">
+                <header class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-xs font-bold text-gray-500 tracking-widest uppercase">ATAŞEHİR (OTOMATİK)</h2>
+                        <h1 class="text-3xl font-bold mt-1 silver-text">Yakınımdaki Fiyatlar</h1>
                     </div>
+                    <div class="text-xl">⚙️</div>
+                </header>
 
-                    <div class="bg-zinc-900/60 p-5 rounded-[2.5rem] flex items-center justify-between border border-white/5 opacity-80">
+                <div onclick="showTab('maps', document.getElementById('map-btn'))" class="w-full h-48 bg-zinc-800 rounded-[2.5rem] relative overflow-hidden border border-white/5 cursor-pointer active:scale-95 transition-transform shadow-2xl shadow-blue-500/10">
+                    <img src="https://api.placeholder.com/400/300?text=Harita+Önizleme" class="w-full h-full object-cover opacity-40 grayscale" alt="Map">
+                    <div class="absolute inset-0 flex items-center justify-center bg-blue-500/5 backdrop-blur-[2px]">
+                        <span class="bg-black/60 px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-white/10 uppercase">Tam Ekran Harita</span>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pb-24">
+                    <div class="bg-zinc-900/60 p-5 rounded-[2.5rem] border border-white/5 flex justify-between items-center">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-[#7ED321] rounded-full flex items-center justify-center border-2 border-zinc-800">
-                                <span class="text-[8px] text-white font-black">BP</span>
-                            </div>
-                            <div class="space-y-1">
-                                <h3 class="text-sm font-bold text-gray-200">BP - kayisdegi</h3>
-                                <p class="text-xs text-gray-400">Benzin <span class="text-white ml-2">42,10 TL</span></p>
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center font-black text-black text-[8px]">SHELL</div>
+                            <div>
+                                <h3 class="font-bold text-sm">Shell - İçerenköy</h3>
+                                <p class="text-[11px] text-gray-400">Benzin <span class="text-white ml-2">41,45 TL</span></p>
                             </div>
                         </div>
-                        <button class="bg-zinc-800 text-gray-400 px-6 py-3 rounded-2xl text-xs font-bold">Gif ></button>
+                        <button class="bg-zinc-800 text-white px-5 py-2.5 rounded-2xl text-[10px] font-bold">Git ></button>
                     </div>
                 </div>
             </div>
 
-            <div id="history" class="tab-content pt-10"></div>
-            <div id="profile" class="tab-content pt-10"></div>
+            <div id="maps" class="tab-content h-full relative">
+                <div class="absolute inset-0 bg-[#242424]">
+                    <div class="w-full h-full opacity-30" style="background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 40px 40px;"></div>
+                    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 bg-green-500 w-10 h-10 rounded-full border-4 border-white shadow-2xl flex items-center justify-center font-bold text-[8px] text-white">SHELL</div>
+                    <div class="absolute top-2/3 right-1/4 bg-red-500 w-8 h-8 rounded-full border-2 border-white flex items-center justify-center font-bold text-[8px] text-white">BP</div>
+                </div>
+                
+                <div class="absolute top-12 left-6 right-6 flex gap-2">
+                    <div class="bg-black/80 backdrop-blur-md flex-1 h-12 rounded-2xl flex items-center px-4 border border-white/10">
+                        <span class="text-gray-500 mr-2">🔍</span>
+                        <input type="text" placeholder="İstasyon Ara..." class="bg-transparent text-xs w-full outline-none">
+                    </div>
+                </div>
+
+                <div class="absolute bottom-28 left-0 right-0 px-6 flex gap-4 overflow-x-auto no-scrollbar pb-4">
+                    <div class="min-w-[280px] bg-zinc-900/90 backdrop-blur-xl p-4 rounded-3xl border border-white/10 shadow-2xl">
+                        <h4 class="text-xs font-bold text-green-500 uppercase">En Yakın</h4>
+                        <div class="flex justify-between items-center mt-2">
+                            <div>
+                                <p class="font-bold">Shell - İçerenköy</p>
+                                <p class="text-[10px] text-gray-400">0.8 km uzaklıkta</p>
+                            </div>
+                            <p class="text-xl font-bold">41.45 <span class="text-[8px] text-gray-500">TL</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="history" class="tab-content p-6 pt-12 text-center text-gray-500">Geçmiş analizleri yakında...</div>
+            <div id="profile" class="tab-content p-6 pt-12 text-center text-gray-500">Kullanıcı Ayarları yakında...</div>
+
         </main>
 
-        <nav class="h-24 bg-[#0A0A0A] border-t border-white/5 flex justify-around items-center px-4 pb-8">
-            <button onclick="showTab('home', this)" class="nav-item active flex flex-col items-center py-2 px-3">
-                <span class="text-[9px] font-bold uppercase tracking-tighter">Ana Sayfa</span>
+        <nav class="h-24 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 flex justify-around items-center px-4 pb-8 z-50">
+            <button onclick="showTab('home', this)" class="nav-item active flex flex-col items-center gap-1">
+                <span class="text-[8px] font-bold uppercase">Litre</span>
             </button>
-            <button class="nav-item flex flex-col items-center py-2 px-3 opacity-40">
-                <span class="text-[9px] font-bold uppercase tracking-tighter">Harita</span>
+            <button id="map-btn" onclick="showTab('maps', this)" class="nav-item flex flex-col items-center gap-1">
+                <span class="text-[8px] font-bold uppercase">Harita</span>
             </button>
-            <button onclick="alert('Kamera modülü demo aşamasında')" class="flex flex-col items-center">
-                <div class="w-14 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-white/10">📷</div>
+            <button onclick="alert('Kamera Demo')" class="nav-item flex flex-col items-center">
+                <div class="w-12 h-12 bg-zinc-800 rounded-2xl flex items-center justify-center border border-white/10">📷</div>
             </button>
-            <button onclick="showTab('history', this)" class="nav-item flex flex-col items-center py-2 px-3">
-                <span class="text-[9px] font-bold uppercase tracking-tighter">Geçmiș</span>
+            <button onclick="showTab('history', this)" class="nav-item flex flex-col items-center gap-1">
+                <span class="text-[8px] font-bold uppercase">Geçmiş</span>
             </button>
-            <button onclick="showTab('profile', this)" class="nav-item flex flex-col items-center py-2 px-3">
-                <span class="text-[9px] font-bold uppercase tracking-tighter">Hesabim</span>
+            <button onclick="showTab('profile', this)" class="nav-item flex flex-col items-center gap-1">
+                <span class="text-[8px] font-bold uppercase">Hesabım</span>
             </button>
         </nav>
     </div>
 
     <script>
         window.addEventListener('load', () => { setTimeout(() => {
-            const splash = document.getElementById('splash');
-            const appContent = document.getElementById('app-content');
-            splash.style.opacity = '0';
-            setTimeout(() => { splash.style.display = 'none'; appContent.style.opacity = '1'; }, 600);
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => { 
+                document.getElementById('splash').style.display = 'none'; 
+                document.getElementById('app-content').style.opacity = '1'; 
+            }, 600);
         }, 2000); });
 
         function showTab(tabId, el) {
