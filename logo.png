@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Litre - Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #000; color: #fff; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* Splash Screen Stili */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-item.active { color: #fff; border-top: 2px solid #fff; }
+        .nav-item { color: #555; transition: 0.3s; padding-top: 10px; }
+        
+        /* Başlıklar için Gümüş Geçiş */
+        .silver-text { 
+            background: linear-gradient(145deg, #ffffff, #a1a1a1); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+    </style>
+</head>
+<body class="max-w-md mx-auto h-screen flex flex-col overflow-hidden bg-black">
+
+    <div id="splash">
+        <img src="logo.png" alt="Litre Logo" class="w-24 h-auto mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+        <h1 class="text-4xl font-light tracking-widest silver-text">LITRE</h1>
+    </div>
+
+    <div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-1000">
+        
+        <div id="home" class="tab-content active p-6 pt-12 flex-1 overflow-y-auto">
+            <h2 class="text-xs text-gray-500 font-medium">ATAŞEHİR (Otomatik)</h2>
+            <h1 class="text-3xl font-bold mt-1 silver-text">Yakınımdaki Fiyatlar</h1>
+            
+            <div class="mt-8 space-y-4">
+                <div class="bg-zinc-900/50 backdrop-blur-md p-5 rounded-[2.5rem] flex items-center justify-between border border-zinc-800">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-black font-black text-[9px]">SHELL</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                <h3 class="text-xs text-gray-400 font-semibold uppercase tracking-wider">En Ucuz</h3>
+                            </div>
+                            <p class="text-2xl font-bold mt-0.5">41.45 <span class="text-sm font-normal text-gray-400">TL</span></p>
+                        </div>
+                    </div>
+                    <button class="bg-white text-black h-12 px-8 rounded-full font-bold text-sm active:scale-95 transition-transform">GİT</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="maps" class="tab-content h-full flex items-center justify-center text-gray-500">Harita Ekranı</div>
+        <div id="camera" class="tab-content h-full flex items-center justify-center text-gray-500">Kamera Ekranı</div>
+        <div id="history" class="tab-content h-full flex items-center justify-center text-gray-500">Geçmiş Ekranı</div>
+        <div id="profile" class="tab-content h-full flex items-center justify-center text-gray-500">Profil Ekranı</div>
+
+        <nav class="h-24 bg-zinc-950 border-t border-white/5 flex justify-around items-center px-2 pb-6">
+            <button onclick="showTab('home', this)" class="nav-item active flex flex-col items-center w-1/5">
+                <span class="text-[9px] font-bold tracking-tighter">ANA SAYFA</span>
+            </button>
+            <button onclick="showTab('maps', this)" class="nav-item flex flex-col items-center w-1/5">
+                <span class="text-[9px] font-bold tracking-tighter">HARİTA</span>
+            </button>
+            <button onclick="showTab('camera', this)" class="nav-item flex flex-col items-center w-1/5">
+                <div class="bg-zinc-800 p-2 rounded-xl">📷</div>
+            </button>
+            <button onclick="showTab('history', this)" class="nav-item flex flex-col items-center w-1/5">
+                <span class="text-[9px] font-bold tracking-tighter">GEÇMİŞ</span>
+            </button>
+            <button onclick="showTab('profile', this)" class="nav-item flex flex-col items-center w-1/5">
+                <span class="text-[9px] font-bold tracking-tighter">HESABIM</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // Splash Screen'den Ana Sayfaya Geçiş
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                const appContent = document.getElementById('app-content');
+                
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    appContent.style.opacity = '1';
+                }, 500);
+            }, 2000); // 2 saniye göster
+        });
+
+        function showTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
+    </script>
+</body>
+</html>
