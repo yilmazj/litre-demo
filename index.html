@@ -6,9 +6,9 @@
     <title>Litre - Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #000; color: #fff; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Splash Screen Stili */
+        /* Premium Splash Animasyonları */
         #splash {
             position: fixed;
             inset: 0;
@@ -18,96 +18,143 @@
             align-items: center;
             justify-content: center;
             z-index: 100;
-            transition: opacity 0.5s ease-out;
+            transition: opacity 0.8s ease-in-out;
         }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .nav-item.active { color: #fff; border-top: 2px solid #fff; }
-        .nav-item { color: #555; transition: 0.3s; padding-top: 10px; }
-        
-        /* Başlıklar için Gümüş Geçiş */
+        .fade-in-up {
+            animation: fadeInUp 1.2s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .silver-text { 
-            background: linear-gradient(145deg, #ffffff, #a1a1a1); 
+            background: linear-gradient(145deg, #FFFFFF 0%, #C8C8C8 50%, #808080 100%); 
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
         }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s ease-in; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .nav-item.active { color: #fff; border-top: 2px solid #fff; }
+        .nav-item { color: #555; transition: 0.3s; padding-top: 10px; }
     </style>
 </head>
 <body class="max-w-md mx-auto h-screen flex flex-col overflow-hidden bg-black">
 
     <div id="splash">
-        <img src="logo.png" alt="Litre Logo" class="w-24 h-auto mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-        <h1 class="text-4xl font-light tracking-widest silver-text">LITRE</h1>
+        <div class="fade-in-up flex flex-col items-center">
+            <svg width="100" height="100" viewBox="0 0 100 130" class="mb-6">
+                <defs>
+                    <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#FFFFFF" />
+                        <stop offset="50%" style="stop-color:#C8C8C8" />
+                        <stop offset="100%" style="stop-color:#808080" />
+                    </linearGradient>
+                </defs>
+                <path d="M50 0C50 0 0 70 0 100C0 127.6 22.4 150 50 150C77.6 150 100 127.6 100 100C100 70 50 0 50 0Z" fill="url(#silverGrad)"/>
+            </svg>
+            <h1 class="text-5xl font-light tracking-[0.3em] silver-text">LITRE</h1>
+        </div>
     </div>
 
     <div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-1000">
         
-        <div id="home" class="tab-content active p-6 pt-12 flex-1 overflow-y-auto">
-            <h2 class="text-xs text-gray-500 font-medium">ATAŞEHİR (Otomatik)</h2>
-            <h1 class="text-3xl font-bold mt-1 silver-text">Yakınımdaki Fiyatlar</h1>
+        <header class="p-6 pt-12 flex justify-between items-start">
+            <div>
+                <h2 class="text-[11px] text-gray-500 font-bold tracking-widest uppercase">ATAŞEHİR <span class="font-normal lowercase opacity-60">(otomatik)</span></h2>
+                <h1 class="text-3xl font-bold mt-1 silver-text">Yakınımdaki Fiyatlar</h1>
+            </div>
+            <div class="w-10 h-10 bg-zinc-900 rounded-full flex items-center justify-center border border-white/5">
+                <span class="text-xs">⚙️</span>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto px-6 space-y-6 pb-10">
             
-            <div class="mt-8 space-y-4">
-                <div class="bg-zinc-900/50 backdrop-blur-md p-5 rounded-[2.5rem] flex items-center justify-between border border-zinc-800">
+            <div class="w-full h-44 bg-zinc-900 rounded-[2rem] border border-white/5 relative overflow-hidden flex items-center justify-center">
+                <div class="absolute inset-0 opacity-20 bg-[url('https://www.google.com/maps/vt/pb=!1m4!1m3!1i14!2i9432!3i6039!2m3!1e0!2sm!3i602111532!3m8!2str!3sUS!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1f2!26m4!1e12!2m2!1sstyle!2s|element:geometry|color:0x212121!26m4!1e12!2m2!1sstyle!2s|element:labels.text.fill|color:0x757575')] bg-cover"></div>
+                <div class="z-10 text-[10px] text-gray-500 tracking-widest uppercase font-bold">Harita Modülü</div>
+                <div class="absolute top-10 left-20 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
+                <div class="absolute bottom-16 right-24 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-zinc-900/40 backdrop-blur-md p-5 rounded-[2.5rem] flex items-center justify-between border border-white/5 shadow-xl">
                     <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center border-4 border-zinc-900">
                             <span class="text-black font-black text-[9px]">SHELL</span>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5">
                                 <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                <h3 class="text-xs text-gray-400 font-semibold uppercase tracking-wider">En Ucuz</h3>
+                                <h3 class="text-[10px] text-green-500 font-bold uppercase tracking-tight italic">En Ucuz</h3>
                             </div>
-                            <p class="text-2xl font-bold mt-0.5">41.45 <span class="text-sm font-normal text-gray-400">TL</span></p>
+                            <h4 class="text-sm font-semibold text-gray-300">İçerenköy</h4>
+                            <p class="text-xl font-bold mt-0.5 tracking-tight silver-text">41.45 <span class="text-[10px] font-normal text-gray-500">TL/L</span></p>
                         </div>
                     </div>
-                    <button class="bg-white text-black h-12 px-8 rounded-full font-bold text-sm active:scale-95 transition-transform">GİT</button>
+                    <button class="bg-white text-black h-12 px-8 rounded-full font-bold text-xs active:scale-90 transition-transform">GİT</button>
+                </div>
+
+                <div class="bg-zinc-900/40 backdrop-blur-md p-5 rounded-[2.5rem] flex items-center justify-between border border-white/5 opacity-70">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-yellow-500 rounded-full flex items-center justify-center border-4 border-zinc-900">
+                            <span class="text-black font-black text-[9px]">BP</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                <h3 class="text-[10px] text-red-500 font-bold uppercase tracking-tight italic">Pahalı</h3>
+                            </div>
+                            <h4 class="text-sm font-semibold text-gray-300">Kayışdağı</h4>
+                            <p class="text-xl font-bold mt-0.5 tracking-tight text-gray-400">42.80 <span class="text-[10px] font-normal text-gray-500">TL/L</span></p>
+                        </div>
+                    </div>
+                    <button class="bg-zinc-800 text-gray-500 h-12 px-8 rounded-full font-bold text-xs">GİT</button>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <div id="maps" class="tab-content h-full flex items-center justify-center text-gray-500">Harita Ekranı</div>
-        <div id="camera" class="tab-content h-full flex items-center justify-center text-gray-500">Kamera Ekranı</div>
-        <div id="history" class="tab-content h-full flex items-center justify-center text-gray-500">Geçmiş Ekranı</div>
-        <div id="profile" class="tab-content h-full flex items-center justify-center text-gray-500">Profil Ekranı</div>
-
-        <nav class="h-24 bg-zinc-950 border-t border-white/5 flex justify-around items-center px-2 pb-6">
-            <button onclick="showTab('home', this)" class="nav-item active flex flex-col items-center w-1/5">
-                <span class="text-[9px] font-bold tracking-tighter">ANA SAYFA</span>
+        <nav class="h-24 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 flex justify-around items-center px-4 pb-6">
+            <button onclick="showTab('home', this)" class="nav-item active flex flex-col items-center w-1/4">
+                <span class="text-[9px] font-black tracking-widest">ANA SAYFA</span>
             </button>
-            <button onclick="showTab('maps', this)" class="nav-item flex flex-col items-center w-1/5">
-                <span class="text-[9px] font-bold tracking-tighter">HARİTA</span>
+            <button onclick="showTab('history', this)" class="nav-item flex flex-col items-center w-1/4">
+                <span class="text-[9px] font-black tracking-widest">GEÇMİŞ</span>
             </button>
-            <button onclick="showTab('camera', this)" class="nav-item flex flex-col items-center w-1/5">
-                <div class="bg-zinc-800 p-2 rounded-xl">📷</div>
-            </button>
-            <button onclick="showTab('history', this)" class="nav-item flex flex-col items-center w-1/5">
-                <span class="text-[9px] font-bold tracking-tighter">GEÇMİŞ</span>
-            </button>
-            <button onclick="showTab('profile', this)" class="nav-item flex flex-col items-center w-1/5">
-                <span class="text-[9px] font-bold tracking-tighter">HESABIM</span>
+            <button onclick="showTab('profile', this)" class="nav-item flex flex-col items-center w-1/4">
+                <span class="text-[9px] font-black tracking-widest">HESABIM</span>
             </button>
         </nav>
     </div>
 
     <script>
-        // Splash Screen'den Ana Sayfaya Geçiş
+        // Splash Transition
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash');
                 const appContent = document.getElementById('app-content');
-                
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
                     appContent.style.opacity = '1';
-                }, 500);
-            }, 2000); // 2 saniye göster
+                }, 800);
+            }, 2500); // Açılış süresi: 2.5 saniye
         });
 
         function showTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            const target = document.getElementById(tabId);
+            if(target) target.classList.add('active');
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             el.classList.add('active');
         }
