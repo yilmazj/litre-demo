@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Litre - Pro Prototype V30</title>
+    <title>Litre - Theme Master V31</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        :root { --bg: #000; --text: #fff; --card: rgba(28, 28, 30, 0.75); --border: rgba(255, 255, 255, 0.08); --subtext: #444; }
-        body.light-mode { --bg: #f2f2f7; --text: #000; --card: rgba(255, 255, 255, 0.8); --border: rgba(0, 0, 0, 0.05); --subtext: #8e8e93; }
+        :root { --bg: #000; --text: #fff; --card: rgba(28, 28, 30, 0.75); --border: rgba(255, 255, 255, 0.08); --subtext: #444; --icon: #fff; }
+        body.light-mode { --bg: #f2f2f7; --text: #000; --card: rgba(255, 255, 255, 0.9); --border: rgba(0, 0, 0, 0.1); --subtext: #8e8e93; --icon: #000; }
 
         body { background-color: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; overflow: hidden; transition: background 0.3s ease; }
         #splash { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; transition: opacity 0.8s; }
-        .floating-dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; height: 70px; background: var(--card); backdrop-filter: blur(30px); border: 1px solid var(--border); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 2000; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .floating-dock { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; height: 70px; background: var(--card); backdrop-filter: blur(30px); border: 1px solid var(--border); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 2000; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         .tab-content { display: none; height: 100%; overflow-y: auto; }
         .tab-content.active { display: block; animation: slideUp 0.4s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -27,13 +27,21 @@
         body.light-mode .silver-grad { background: none; -webkit-text-fill-color: initial; color: #000; font-weight: 800; }
         
         #map, #miniMap { height: 100%; width: 100%; background: #111; }
-        .custom-pin { padding: 6px 12px; border-radius: 14px; font-weight: 800; font-size: 11px; border: 1.5px solid #fff; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.4); text-align: center; }
+        .leaflet-control-attribution { display: none !important; }
+        .custom-pin { padding: 6px 12px; border-radius: 14px; font-weight: 800; font-size: 11px; border: 1.5px solid #fff; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.3); text-align: center; }
+
+        /* Picker & Overlays - LIGHT MODE ADAPTED */
         .picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 4000; display: none; align-items: flex-end; }
+        body.light-mode .picker-overlay { background: rgba(255,255,255,0.7); }
         .picker-container { background: #1c1c1e; width: 100%; border-radius: 35px 35px 0 0; padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); color: #fff; }
+        body.light-mode .picker-container { background: #fff; border-top: 1px solid #e5e5ea; color: #000; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+        
         .wheel-wrapper { position: relative; height: 220px; overflow: hidden; }
         .wheel-selection-bar { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); height: 48px; background: rgba(255, 255, 255, 0.08); border-radius: 14px; pointer-events: none; }
+        body.light-mode .wheel-selection-bar { background: rgba(0, 0, 0, 0.05); }
+        
         .wheel-picker { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; }
-        .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.25; color: #fff; }
+        .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.25; color: var(--text); }
         .wheel-item.selected { opacity: 1; font-weight: 700; font-size: 22px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
@@ -49,11 +57,11 @@
         <div class="picker-container" onclick="event.stopPropagation()">
             <div class="flex justify-between mb-8 px-4"><button onclick="closeSettings()" class="text-zinc-500 font-bold">Kapat</button><h3 class="font-bold text-lg">Görünüm Ayarları</h3><div class="w-12"></div></div>
             <div class="space-y-4 pb-10">
-                <div onclick="setTheme('light')" id="lightOption" class="flex justify-between items-center p-6 bg-zinc-900 rounded-[2rem] border border-white/5 transition-all">
+                <div onclick="setTheme('light')" id="lightOption" class="flex justify-between items-center p-6 bg-zinc-900/50 body.light-mode:bg-zinc-100 rounded-[2rem] border border-white/5 transition-all">
                     <div class="flex items-center gap-4"><i data-lucide="sun"></i><span class="font-bold text-lg">Aydınlık Mod</span></div>
                     <div id="lightCheck" class="hidden w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div>
                 </div>
-                <div onclick="setTheme('dark')" id="darkOption" class="flex justify-between items-center p-6 bg-zinc-900 rounded-[2rem] border border-blue-500 transition-all">
+                <div onclick="setTheme('dark')" id="darkOption" class="flex justify-between items-center p-6 bg-zinc-900/50 rounded-[2rem] border border-blue-500 transition-all">
                     <div class="flex items-center gap-4"><i data-lucide="moon"></i><span class="font-bold text-lg">Karanlık Mod</span></div>
                     <div id="darkCheck" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div>
                 </div>
@@ -65,7 +73,7 @@
         <div class="picker-container" onclick="event.stopPropagation()">
             <div class="flex justify-between mb-8 px-4"><button onclick="closePicker()" class="text-zinc-500 font-bold">Vazgeç</button><h3 id="pickerTitle" class="font-bold text-lg">Seçiniz</h3><button id="nextBtn" onclick="processSelection()" class="text-blue-500 font-bold">Devam</button></div>
             <div id="wheelContainer"><div class="wheel-wrapper"><div class="wheel-selection-bar"></div><div id="wheel" class="wheel-picker no-scrollbar" onscroll="handleWheelScroll(this)"></div></div></div>
-            <div id="plateInputContainer" class="hidden py-10 px-4"><input type="text" id="plateInput" placeholder="34 ABC 123" class="w-full bg-zinc-800 border border-white/10 rounded-2xl p-5 text-2xl font-black text-center uppercase tracking-widest outline-none text-white"></div>
+            <div id="plateInputContainer" class="hidden py-10 px-4"><input type="text" id="plateInput" placeholder="34 ABC 123" class="w-full bg-zinc-800/50 border border-white/10 rounded-2xl p-5 text-2xl font-black text-center uppercase tracking-widest outline-none text-current"></div>
         </div>
     </div>
 
@@ -73,12 +81,15 @@
         <main class="flex-1 overflow-hidden relative">
             
             <div id="home" class="tab-content active p-6 pt-10 space-y-7 no-scrollbar pb-52">
-                <header class="flex justify-center items-center py-4"><div class="flex items-center gap-2"><svg width="22" height="30" viewBox="0 0 100 130" id="headerLogo"><path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg><h1 class="text-2xl font-bold tracking-tight">Litre</h1></div></header>
+                <header class="flex justify-center items-center py-4"><div class="flex items-center gap-2" id="headerLogoContainer"><svg width="22" height="30" viewBox="0 0 100 130" id="headerLogo"><path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg><h1 class="text-2xl font-bold tracking-tight" id="headerTitle">Litre</h1></div></header>
                 <h1 class="text-3xl font-bold silver-grad leading-tight">Yakınımdaki Fiyatlar</h1>
                 <div onclick="showTab('maps', document.getElementById('map-nav'), true)" class="w-full h-64 bg-[#111] rounded-[3.5rem] border border-white/10 relative overflow-hidden shadow-2xl active:scale-[0.98] transition-all"><div id="miniMap"></div></div>
                 <div class="flex justify-center"><div class="flex items-center gap-2.5 px-6 py-3 glass-card rounded-full shadow-lg"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-500"></i><span class="text-[10px] font-black uppercase tracking-[0.15em]">Konum: Kartal, İstanbul</span></div></div>
+                
                 <div class="space-y-6">
                     <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between border border-white/5 shadow-xl"><div class="flex items-start gap-5"><div class="w-14 h-14 bg-[#FFD500] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800"><span class="text-[#DE2128] font-black text-[9px]">SHELL</span></div><div class="space-y-2"><h3 class="font-bold text-sm uppercase tracking-tight">Shell - İçerenköy</h3><div class="space-y-1.5 text-xs font-medium"><p class="flex justify-between w-32 opacity-60">Benzin <span class="font-bold">41,45 TL</span></p><p class="flex justify-between w-32 opacity-60">Motorin <span class="font-bold">43,30 TL</span></p><p class="flex justify-between w-32 opacity-60">LPG <span class="font-bold">21,50 TL</span></p></div></div></div><i data-lucide="chevron-right" class="w-5 h-5 opacity-20 self-center"></i></div>
+                    <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between border border-white/5 shadow-xl"><div class="flex items-start gap-5"><div class="w-14 h-14 bg-[#005BAB] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800"><span class="text-white font-black text-[9px]">OPET</span></div><div class="space-y-2"><h3 class="font-bold text-sm uppercase tracking-tight">Opet - Kartal Sahil</h3><div class="space-y-1.5 text-xs font-medium"><p class="flex justify-between w-32 opacity-60">Benzin <span class="font-bold">42,10 TL</span></p><p class="flex justify-between w-32 opacity-60">Motorin <span class="font-bold">43,50 TL</span></p><p class="flex justify-between w-32 opacity-60">LPG <span class="font-bold">22,00 TL</span></p></div></div></div></div>
+                    <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between border border-white/5 shadow-xl"><div class="flex items-start gap-5"><div class="w-14 h-14 bg-[#DE2128] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800"><span class="text-white font-black text-[9px]">PO</span></div><div class="space-y-2"><h3 class="font-bold text-sm uppercase tracking-tight">Petrol Ofisi - E5</h3><div class="space-y-1.5 text-xs font-medium"><p class="flex justify-between w-32 opacity-60">Benzin <span class="font-bold">42,50 TL</span></p><p class="flex justify-between w-32 opacity-60">Motorin <span class="font-bold">43,90 TL</span></p><p class="flex justify-between w-32 opacity-60">LPG <span class="font-bold">22,50 TL</span></p></div></div></div></div>
                 </div>
             </div>
 
@@ -127,10 +138,11 @@
 
         function setTheme(mode) {
             currentTheme = mode;
-            if(mode === 'light') { document.body.classList.add('light-mode'); document.getElementById('lightCheck').classList.remove('hidden'); document.getElementById('darkCheck').classList.add('hidden'); document.getElementById('lightOption').style.borderColor = '#3b82f6'; document.getElementById('darkOption').style.borderColor = 'transparent'; }
-            else { document.body.classList.remove('light-mode'); document.getElementById('lightCheck').classList.add('hidden'); document.getElementById('darkCheck').classList.remove('hidden'); document.getElementById('lightOption').style.borderColor = 'transparent'; document.getElementById('darkOption').style.borderColor = '#3b82f6'; }
-            if(leafletMap) { leafletMap.eachLayer(layer => { if(layer instanceof L.TileLayer) leafletMap.removeLayer(layer); }); L.tileLayer(mode === 'dark' ? tileDark : tileLight).addTo(leafletMap); }
-            if(miniMap) { miniMap.eachLayer(layer => { if(layer instanceof L.TileLayer) miniMap.removeLayer(layer); }); L.tileLayer(mode === 'dark' ? tileDark : tileLight).addTo(miniMap); }
+            const b = document.body;
+            if(mode === 'light') { b.classList.add('light-mode'); document.getElementById('lightCheck').classList.remove('hidden'); document.getElementById('darkCheck').classList.add('hidden'); }
+            else { b.classList.remove('light-mode'); document.getElementById('lightCheck').classList.add('hidden'); document.getElementById('darkCheck').classList.remove('hidden'); }
+            if(leafletMap) { leafletMap.eachLayer(l => { if(l instanceof L.TileLayer) leafletMap.removeLayer(l); }); L.tileLayer(mode === 'dark' ? tileDark : tileLight).addTo(leafletMap); }
+            if(miniMap) { miniMap.eachLayer(l => { if(l instanceof L.TileLayer) miniMap.removeLayer(l); }); L.tileLayer(mode === 'dark' ? tileDark : tileLight).addTo(miniMap); }
         }
 
         const carData = { 'Audi': ['A3', 'A4', 'A6', 'A8', 'Q5'], 'BMW': ['1 Serisi', '3 Serisi', '5 Serisi', 'X3', 'X5'], 'BYD': ['Atto 3', 'Dolphin', 'Seal', 'Han', 'Tang'], 'Chevrolet': ['Aveo', 'Cruze', 'Malibu', 'Camaro', 'Captiva'], 'Citroën': ['C3', 'C4', 'C5', 'C4 Picasso', 'C5 Aircross'], 'Dacia': ['Logan', 'Sandero', 'Duster', 'Lodgy', 'Jogger'], 'Ferrari': ['488', 'F8', 'Roma', 'California', 'Portofino'], 'Fiat': ['Egea', 'Linea', 'Punto', 'Bravo', '500'], 'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Kuga', 'Mustang'], 'Honda': ['Civic', 'Accord', 'Jazz', 'CR-V', 'HR-V'], 'Hyundai': ['i20', 'i30', 'Elantra', 'Tucson', 'Santa Fe'], 'Jaguar': ['XE', 'XF', 'XJ', 'F-Pace', 'E-Pace'], 'Kia': ['Rio', 'Ceed', 'Cerato', 'Sportage', 'Sorento'], 'Lamborghini': ['Huracan', 'Aventador', 'Gallardo', 'Urus', 'Murciélago'], 'Land Rover': ['Discovery', 'Range Rover', 'Range Rover Sport', 'Evoque', 'Defender'], 'Lexus': ['IS', 'ES', 'GS', 'NX', 'RX'], 'Maserati': ['Ghibli', 'Quattroporte', 'Levante', 'GranTurismo', 'GranCabrio'], 'Mazda': ['Mazda 2', 'Mazda 3', 'Mazda 6', 'CX-3', 'CX-5'], 'Mercedes-Benz': ['A Serisi', 'C Serisi', 'E Serisi', 'S Serisi', 'GLC'], 'Mitsubishi': ['Lancer', 'Colt', 'ASX', 'Outlander', 'Pajaro'], 'Nissan': ['Micra', 'Almera', 'Qashqai', 'X-Trail', 'Juke'], 'Opel': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland'], 'Peugeot': ['208', '308', '3008', '5008', '508'], 'Porsche': ['911', 'Cayenne', 'Panamera', 'Macan', 'Taycan'], 'Renault': ['Clio', 'Megane', 'Talisman', 'Captur', 'Kadjar'], 'Seat': ['Ibiza', 'Leon', 'Toledo', 'Ateca', 'Arona'], 'Skoda': ['Fabia', 'Octavia', 'Superb', 'Karoq', 'Kodiaq'], 'Subaru': ['Impreza', 'Legacy', 'Forester', 'Outback', 'XV'], 'Suzuki': ['Swift', 'Vitara', 'Jimny', 'S-Cross', 'Ignis'], 'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Roadster'], 'Toyota': ['Corolla', 'Yaris', 'Camry', 'C-HR', 'RAV4'], 'Volkswagen': ['Polo', 'Golf', 'Passat', 'Tiguan', 'Jetta'], 'Volvo': ['S60', 'S90', 'XC40', 'XC60', 'XC90'] };
