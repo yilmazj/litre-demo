@@ -210,14 +210,27 @@
         lucide.createIcons();
         let leafletMap, miniMap, currentTheme = 'dark';
         
+         // --- 18 ADET ÖZEL VERİ (GÜNCEL FİYAT LİSTESİYLE) ---
         let fuelRecords = [
             { station: 'Shell - İçerenköy', date: '21.01.2026', amount: 1890.00, details: '35.00 L · 54,00 TL/L' },
             { station: 'Opet - Küçükbakkalköy', date: '05.01.2026', amount: 1599.00, details: '30.00 L · 53,30 TL/L' },
             { station: 'Petrol Ofisi - E5', date: '24.12.2025', amount: 1489.60, details: '28.00 L · 53,20 TL/L' },
             { station: 'Shell - Kartal', date: '08.12.2025', amount: 1686.40, details: '32.00 L · 52,70 TL/L' },
-            { station: 'Opet - Sahil', date: '20.11.2025', amount: 1190.20, details: '22.00 L · 54,10 TL/L' }
+            { station: 'Opet - Sahil', date: '20.11.2025', amount: 1190.20, details: '22.00 L · 54,10 TL/L' },
+            { station: 'PO - Maltepe', date: '04.11.2025', amount: 1872.50, details: '35.00 L · 53,50 TL/L' },
+            { station: 'Shell - Ataşehir', date: '25.10.2025', amount: 1345.00, details: '25.00 L · 53,80 TL/L' },
+            { station: 'Opet - Bostancı', date: '10.10.2025', amount: 1596.00, details: '30.00 L · 53,20 TL/L' },
+            { station: 'PO - Pendik', date: '22.09.2025', amount: 1495.20, details: '28.00 L · 53,40 TL/L' },
+            { station: 'Shell - Küçükyalı', date: '05.09.2025', amount: 1696.00, details: '32.00 L · 53,00 TL/L' },
+            { station: 'Opet - Kayışdağı', date: '18.08.2025', amount: 1150.60, details: '22.00 L · 52,30 TL/L' },
+            { station: 'PO - Tuzla', date: '02.08.2025', amount: 1823.50, details: '35.00 L · 52,10 TL/L' },
+            { station: 'Shell - Erenköy', date: '26.07.2025', amount: 1310.00, details: '25.00 L · 52,40 TL/L' },
+            { station: 'Opet - Suadiye', date: '12.07.2025', amount: 1557.00, details: '30.00 L · 51,90 TL/L' },
+            { station: 'PO - Göztepe', date: '28.06.2025', amount: 1380.40, details: '28.00 L · 49,30 TL/L' },
+            { station: 'Shell - Ümraniye', date: '10.06.2025', amount: 1520.00, details: '32.00 L · 47,50 TL/L' },
+            { station: 'Opet - Çekmeköy', date: '24.05.2025', amount: 1051.60, details: '22.00 L · 47,80 TL/L' },
+            { station: 'PO - Sancaktepe', date: '05.05.2025', amount: 1617.00, details: '35.00 L · 46,20 TL/L' }
         ];
-
         function updateGarageAnalysis() {
             const total = fuelRecords.reduce((sum, r) => sum + r.amount, 0);
             const avg = total / 5;
