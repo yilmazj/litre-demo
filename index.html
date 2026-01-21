@@ -99,7 +99,7 @@
                     <div id="lightCheck" class="hidden w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div>
                 </div>
                 <div onclick="setTheme('dark')" id="darkOption" class="flex justify-between items-center p-6 settings-item rounded-[2rem] border transition-all border-blue-500">
-                    <div class="flex items-center gap-4"><i data-lucide="moon" id="moonIcon"></i><span class="font-bold text-lg text-white">Karanlık Mod</span></div>
+                    <div class="flex items-center gap-4"><i data-lucide="moon" id="moonIcon"></i><span class="font-bold text-lg ">Karanlık Mod</span></div>
                     <div id="darkCheck" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div>
                 </div>
             </div>
@@ -250,19 +250,33 @@
 
         const tileDark = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
         const tileLight = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-        const stations = [{ lat: 41.0082, lng: 28.9784, price: '53.90', color: '#22c55e' }, { lat: 41.03, lng: 28.93, price: '54.00', color: '#eab308' }, { lat: 40.98, lng: 29.05, price: '54.05', color: '#ef4444' }];
+        // İstediğin ilçelerin yaklaşık koordinatları
+const stations = [
+    { lat: 40.9247, lng: 29.1311, price: '53.90', color: '#22c55e' }, // Yeşil - Maltepe
+    { lat: 40.9828, lng: 29.1111, price: '54.00', color: '#eab308' }, // Sarı - Ataşehir
+    { lat: 40.8887, lng: 29.1852, price: '54.05', color: '#ef4444' }  // Kırmızı - Kartal
+];
 
-        function initMap() { if (leafletMap) return; leafletMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([41.0082, 28.9784], 13); L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(leafletMap); stations.forEach(s => { const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [60, 30] }); L.marker([s.lat, s.lng], { icon }).addTo(leafletMap); }); }
-        function initMiniMap() { if (miniMap) return; miniMap = L.map('miniMap', { zoomControl: false, attributionControl: false, dragging: false, touchZoom: false }).setView([41.0082, 28.9784], 12); L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(miniMap); stations.forEach(s => { const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [40, 20] }); L.marker([s.lat, s.lng], { icon }).addTo(miniMap); }); }
+// Haritaların merkezini Anadolu Yakası'na odaklayalım (Merkez: Maltepe civarı)
+function initMap() { 
+    if (leafletMap) return; 
+    leafletMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([40.94, 29.14], 12); 
+    L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(leafletMap); 
+    stations.forEach(s => { 
+        const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [60, 30] }); 
+        L.marker([s.lat, s.lng], { icon }).addTo(leafletMap); 
+    }); 
+}
 
-        function setTheme(mode) {
-            currentTheme = mode;
-            const b = document.body;
-            if(mode === 'light') { b.classList.add('light-mode'); document.getElementById('lightCheck').classList.remove('hidden'); document.getElementById('darkCheck').classList.add('hidden'); document.getElementById('lightOption').style.borderColor = '#3b82f6'; document.getElementById('darkOption').style.borderColor = 'rgba(0,0,0,0.1)'; }
-            else { b.classList.remove('light-mode'); document.getElementById('lightCheck').classList.add('hidden'); document.getElementById('darkCheck').classList.remove('hidden'); document.getElementById('lightOption').style.borderColor = 'rgba(255,255,255,0.05)'; document.getElementById('darkOption').style.borderColor = '#3b82f6'; }
-            if(leafletMap) { leafletMap.eachLayer(l => { if(l instanceof L.TileLayer) leafletMap.removeLayer(l); }); L.tileLayer(mode === 'dark' ? tileDark : tileLight).addTo(leafletMap); }
-            if(miniMap) { miniMap.eachLayer(l => { if(l instanceof L.TileLayer) miniMap.removeLayer(l); }); L.tileLayer(mode === 'dark' ? tileDark : tileLight).addTo(miniMap); }
-        }
+function initMiniMap() { 
+    if (miniMap) return; 
+    miniMap = L.map('miniMap', { zoomControl: false, attributionControl: false, dragging: false, touchZoom: false }).setView([40.94, 29.14], 11); 
+    L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(miniMap); 
+    stations.forEach(s => { 
+        const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [40, 20] }); 
+        L.marker([s.lat, s.lng], { icon }).addTo(miniMap); 
+    }); 
+}
 
         const carData = { 'Audi': ['A3', 'A4', 'A6', 'A8', 'Q5'], 'BMW': ['1 Serisi', '3 Serisi', '5 Serisi', 'X3', 'X5'], 'BYD': ['Atto 3', 'Dolphin', 'Seal', 'Han', 'Tang'], 'Chevrolet': ['Aveo', 'Cruze', 'Malibu', 'Camaro', 'Captiva'], 'Citroën': ['C3', 'C4', 'C5', 'C4 Picasso', 'C5 Aircross'], 'Dacia': ['Logan', 'Sandero', 'Duster', 'Lodgy', 'Jogger'], 'Ferrari': ['488', 'F8', 'Roma', 'California', 'Portofino'], 'Fiat': ['Egea', 'Linea', 'Punto', 'Bravo', '500'], 'Ford': ['Fiesta', 'Focus', 'Mondeo', 'Kuga', 'Mustang'], 'Honda': ['Civic', 'Accord', 'Jazz', 'CR-V', 'HR-V'], 'Hyundai': ['i20', 'i30', 'Elantra', 'Tucson', 'Santa Fe'], 'Jaguar': ['XE', 'XF', 'XJ', 'F-Pace', 'E-Pace'], 'Kia': ['Rio', 'Ceed', 'Cerato', 'Sportage', 'Sorento'], 'Lamborghini': ['Huracan', 'Aventador', 'Gallardo', 'Urus', 'Murciélago'], 'Land Rover': ['Discovery', 'Range Rover', 'Range Rover Sport', 'Evoque', 'Defender'], 'Lexus': ['IS', 'ES', 'GS', 'NX', 'RX'], 'Maserati': ['Ghibli', 'Quattroporte', 'Levante', 'GranTurismo', 'GranCabrio'], 'Mazda': ['Mazda 2', 'Mazda 3', 'Mazda 6', 'CX-3', 'CX-5'], 'Mercedes-Benz': ['A Serisi', 'C Serisi', 'E Serisi', 'S Serisi', 'GLC'], 'Mitsubishi': ['Lancer', 'Colt', 'ASX', 'Outlander', 'Pajaro'], 'Nissan': ['Micra', 'Almera', 'Qashqai', 'X-Trail', 'Juke'], 'Opel': ['Corsa', 'Astra', 'Insignia', 'Mokka', 'Crossland'], 'Peugeot': ['208', '308', '3008', '5008', '508'], 'Porsche': ['911', 'Cayenne', 'Panamera', 'Macan', 'Taycan'], 'Renault': ['Clio', 'Megane', 'Talisman', 'Captur', 'Kadjar'], 'Seat': ['Ibiza', 'Leon', 'Toledo', 'Ateca', 'Arona'], 'Skoda': ['Fabia', 'Octavia', 'Superb', 'Karoq', 'Kodiaq'], 'Subaru': ['Impreza', 'Legacy', 'Forester', 'Outback', 'XV'], 'Suzuki': ['Swift', 'Vitara', 'Jimny', 'S-Cross', 'Ignis'], 'Tesla': ['Model S', 'Model 3', 'Model X', 'Model Y', 'Roadster'], 'Toyota': ['Corolla', 'Yaris', 'Camry', 'C-HR', 'RAV4'], 'Volkswagen': ['Polo', 'Golf', 'Passat', 'Tiguan', 'Jetta'], 'Volvo': ['S60', 'S90', 'XC40', 'XC60', 'XC90'] };
         const years = Array.from({length: 2026-1990+1}, (_, i) => (2026-i).toString());
