@@ -66,17 +66,17 @@
 <body class="max-w-md mx-auto h-screen flex flex-col">
 
 <div id="splash">
-    <svg width="90" height="120" viewBox="0 0 100 130" class="mb-4">
+    <svg width="90" height="110" viewBox="0 0 100 120" class="mb-4">
         <defs>
-            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="logoGradientDiag" x1="0%" y1="100%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
                 <stop offset="50%" style="stop-color:#C8C8C8;stop-opacity:1" />
                 <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
             </linearGradient>
         </defs>
-        <path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" 
+        <path d="M50 25 C 50 25, 15 70, 15 90 A 35 35 0 0 0 85 90 C 85 70, 50 25, 50 25 Z" 
               fill="none" 
-              stroke="url(#logoGradient)" 
+              stroke="url(#logoGradientDiag)" 
               stroke-width="11" 
               stroke-linecap="round" 
               stroke-linejoin="round"/>
@@ -142,11 +142,25 @@
             
             <div id="home" class="tab-content active no-scrollbar pb-52">
                 <header class="dynamic-header">
-                    <div class="flex items-center gap-2">
-                        <svg width="22" height="30" viewBox="0 0 100 130" id="headerLogoSvg"><path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        <h1 class="text-2xl font-bold tracking-tight">Litre</h1>
-                    </div>
-                </header>
+    <div class="flex items-center gap-2">
+        <svg width="22" height="28" viewBox="0 0 100 120" id="headerLogoSvg">
+            <defs>
+                <linearGradient id="headerLogoGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#C8C8C8;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <path d="M50 25 C 50 25, 15 70, 15 90 A 35 35 0 0 0 85 90 C 85 70, 50 25, 50 25 Z" 
+                  fill="none" 
+                  stroke="url(#headerLogoGradient)" 
+                  stroke-width="12" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"/>
+        </svg>
+        <h1 class="text-2xl font-bold tracking-tight">Litre</h1>
+    </div>
+</header>
                 
                 <div class="p-6 space-y-7">
                     <h1 class="text-3xl font-bold silver-grad leading-tight">Yakınımdaki Fiyatlar</h1>
