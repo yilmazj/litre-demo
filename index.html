@@ -237,7 +237,7 @@
 
         const tileDark = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
         const tileLight = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-        const stations = [{ lat: 41.0082, lng: 28.9784, price: '41.45', color: '#22c55e' }, { lat: 41.03, lng: 28.93, price: '42.10', color: '#eab308' }, { lat: 40.98, lng: 29.05, price: '42.50', color: '#ef4444' }];
+        const stations = [{ lat: 41.0082, lng: 28.9784, price: '53.90', color: '#22c55e' }, { lat: 41.03, lng: 28.93, price: '54.00', color: '#eab308' }, { lat: 40.98, lng: 29.05, price: '54.05', color: '#ef4444' }];
 
         function initMap() { if (leafletMap) return; leafletMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([41.0082, 28.9784], 13); L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(leafletMap); stations.forEach(s => { const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [60, 30] }); L.marker([s.lat, s.lng], { icon }).addTo(leafletMap); }); }
         function initMiniMap() { if (miniMap) return; miniMap = L.map('miniMap', { zoomControl: false, attributionControl: false, dragging: false, touchZoom: false }).setView([41.0082, 28.9784], 12); L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(miniMap); stations.forEach(s => { const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [40, 20] }); L.marker([s.lat, s.lng], { icon }).addTo(miniMap); }); }
