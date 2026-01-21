@@ -65,10 +65,24 @@
 </head>
 <body class="max-w-md mx-auto h-screen flex flex-col">
 
-    <div id="splash">
-        <svg width="90" height="120" viewBox="0 0 100 130" class="mb-4"><path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" fill="none" stroke="white" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <h1 class="text-5xl font-bold text-white tracking-tight">Litre</h1>
-    </div>
+<div id="splash">
+    <svg width="90" height="120" viewBox="0 0 100 130" class="mb-4">
+        <defs>
+            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#C8C8C8;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M50 10 C 50 10, 10 70, 10 95 A 40 40 0 0 0 90 95 C 90 70, 50 10, 50 10 Z" 
+              fill="none" 
+              stroke="url(#logoGradient)" 
+              stroke-width="11" 
+              stroke-linecap="round" 
+              stroke-linejoin="round"/>
+    </svg>
+    <h1 class="text-5xl font-bold silver-grad tracking-tight">Litre</h1>
+</div>
 
     <div id="scanOverlay" class="scan-overlay">
         <button onclick="closeScan()" class="absolute top-12 right-6 p-3 bg-white/10 rounded-full"><i data-lucide="x" class="text-white"></i></button>
