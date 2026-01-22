@@ -27,7 +27,7 @@
         body.light-mode .silver-grad { background: none; -webkit-text-fill-color: initial; color: #000; font-weight: 800; }
         
         #map, #miniMap { height: 100%; width: 100%; min-height: 250px; background: #111; border-radius: 2rem; }
-        .custom-pin { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 10px; font-weight: 800; font-size: 11px; border: 1.5px solid #fff; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.3); white-space: nowrap; }
+        .custom-pin { display: flex !important; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 10px; font-weight: 800; font-size: 11px; border: 1.5px solid #fff; color: white; box-shadow: 0 8px 16px rgba(0,0,0,0.3); white-space: nowrap; }
 
         .picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 4000; display: none; align-items: flex-end; }
         body.light-mode .picker-overlay { background: rgba(0,0,0,0.3); }
@@ -38,6 +38,8 @@
         .wheel-picker { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; }
         .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.25; color: var(--text); }
         .wheel-item.selected { opacity: 1; font-weight: 700; font-size: 22px; color: var(--text); }
+        .color-circle { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; }
+        .color-circle.active { border-color: #3b82f6; transform: scale(1.15); box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
         /* Scanner */
@@ -80,6 +82,7 @@
         <div class="picker-container" onclick="event.stopPropagation()">
             <div class="flex justify-between mb-8 px-4"><button onclick="closePicker()" class="text-zinc-500 font-bold">Vazgeç</button><h3 id="pickerTitle" class="font-bold text-lg text-white">Seçiniz</h3><button id="nextBtn" onclick="processSelection()" class="text-blue-500 font-bold">Devam</button></div>
             <div id="wheelContainer"><div class="wheel-wrapper"><div class="wheel-selection-bar"></div><div id="wheel" class="wheel-picker no-scrollbar" onscroll="handleWheelScroll(this)"></div></div></div>
+            <div id="colorContainer" class="hidden py-8 px-4"><div class="grid grid-cols-3 gap-6 justify-items-center" id="colorGrid"></div></div>
             <div id="plateInputContainer" class="hidden py-10 px-4"><input type="text" id="plateInput" placeholder="34 ABC 123" class="w-full bg-zinc-800/50 border border-white/10 rounded-2xl p-5 text-2xl font-black text-center uppercase tracking-widest outline-none text-current"></div>
         </div>
     </div>
@@ -118,7 +121,7 @@
                             </div>
                             <div class="text-right"><div><p class="text-[9px] opacity-40 uppercase mb-0.5">Plaka</p><p id="viewPlaka" class="text-sm font-bold tracking-tight">34 ABC 123</p></div></div>
                         </div>
-                        <div class="flex justify-center py-4"><img id="carImage" src="https://images.turo.com/car-images/p/kXy_pX_pSlGzG3H8L9J6dQ.jpg" class="w-full h-32 object-contain drop-shadow-2xl" alt="Araç Görseli"></div>
+                        <div class="flex justify-center py-4"><img id="carImage" src="https://di-uploads-pod16.dealerinspire.com/continentaltoyota/uploads/2023/02/2023-Toyota-Camry-XSE-V6-Wind-Chill-Pearl-Midnight-Black-Metallic-roof.png" class="w-full h-32 object-contain drop-shadow-2xl transition-all duration-700" alt="Araç Görseli"></div>
                         <div class="pt-4 border-t border-white/5"><p class="text-[10px] opacity-40 font-black uppercase mb-1">Ocak Ayı Ortalama Masrafı</p><p id="viewAvgCost" class="text-2xl font-black text-blue-500 tracking-tighter">3.126,50 TL</p></div>
                     </div>
                     <div class="glass-card p-3 rounded-[2.5rem] space-y-1 shadow-2xl">
@@ -144,19 +147,23 @@
         let step = 0, selections = { Marka: 'Audi', Model: 'A6', Yıl: '2023', Renk: 'Siyah', Plaka: '34 ABC 123' }, tempValue = '';
 
         // --- PICKER LOGIC (REVERTED TO WHEEL STYLE) ---
-        function startVehicleFlow() { step = 0; document.getElementById('plateInputContainer').classList.add('hidden'); document.getElementById('wheelContainer').classList.remove('hidden'); updatePickerUI(); document.getElementById('pickerOverlay').style.display = 'flex'; }
+        function startVehicleFlow() { step = 0; document.getElementById('plateInputContainer').classList.add('hidden'); document.getElementById('colorContainer').classList.add('hidden'); document.getElementById('wheelContainer').classList.remove('hidden'); updatePickerUI(); document.getElementById('pickerOverlay').style.display = 'flex'; }
         
         function updatePickerUI() {
             const wheel = document.getElementById('wheel'); wheel.innerHTML = '<div style="height: 88px;"></div>';
             let data = step === 0 ? Object.keys(carData) : step === 1 ? carData[selections.Marka] : step === 2 ? years : step === 3 ? colors : [];
             document.getElementById('pickerTitle').innerText = step === 0 ? 'Marka Seç' : step === 1 ? 'Model Seç' : step === 2 ? 'Yıl Seç' : 'Renk Seç';
-            if(step === 4) { document.getElementById('wheelContainer').classList.add('hidden'); document.getElementById('plateInputContainer').classList.remove('hidden'); document.getElementById('pickerTitle').innerText = 'Plaka Gir'; return; }
+            if(step === 3) { document.getElementById('wheelContainer').classList.add('hidden'); document.getElementById('colorContainer').classList.remove('hidden'); document.getElementById('pickerTitle').innerText = 'Renk Seç'; const grid = document.getElementById('colorGrid'); grid.innerHTML = colors.map(c => `<div onclick="selectColor('${c}')" class="color-circle ${selections.Renk === c ? 'active' : ''}" style="background:${getColorCode(c)}"></div>`).join(''); return; }
+            if(step === 4) { document.getElementById('colorContainer').classList.add('hidden'); document.getElementById('plateInputContainer').classList.remove('hidden'); document.getElementById('pickerTitle').innerText = 'Plaka Gir'; return; }
             data.forEach(item => wheel.innerHTML += `<div class="wheel-item">${item}</div>`);
             wheel.innerHTML += '<div style="height: 88px;"></div>'; wheel.scrollTop = 0;
         }
 
+        function selectColor(name) { selections.Renk = name; updatePickerUI(); }
+        function getColorCode(name) { const codes = { 'Beyaz': '#FFFFFF', 'Siyah': '#000000', 'Gümüş': '#C0C0C0', 'Mavi': '#0033CC', 'Kırmızı': '#CC0000' }; return codes[name] || '#FFFFFF'; }
+
         function processSelection() {
-            if(step === 0) selections.Marka = tempValue; if(step === 1) selections.Model = tempValue; if(step === 2) selections.Yıl = tempValue; if(step === 3) selections.Renk = tempValue;
+            if(step === 0) selections.Marka = tempValue; if(step === 1) selections.Model = tempValue; if(step === 2) selections.Yıl = tempValue;
             if(step === 4) { selections.Plaka = document.getElementById('plateInput').value || '34 ABC 123'; saveToProfile(); closePicker(); return; }
             step++; updatePickerUI();
         }
@@ -167,10 +174,10 @@
             document.getElementById('viewFullCar').innerText = selections.Marka + ' ' + selections.Model;
             document.getElementById('viewYıl').innerText = selections.Yıl; document.getElementById('viewPlaka').innerText = selections.Plaka;
             const img = document.getElementById('carImage');
-            // FIX: Reliable PNG Sources
+            // FIX: STABLE AND DIRECT PNG LINKS
             if(selections.Marka === 'Suzuki') img.src = "https://www.suzuki.com.tr/upload/modeller/swift/swift-spor-renk-mavi.png";
-            else if(selections.Renk === 'Siyah') img.src = "https://images.turo.com/car-images/p/kXy_pX_pSlGzG3H8L9J6dQ.jpg";
-            else img.src = "https://images.turo.com/car-images/p/mS6_Z_3eT_y7K9R2L5J4qA.jpg";
+            else if(selections.Marka === 'Audi') img.src = "https://di-uploads-pod16.dealerinspire.com/continentaltoyota/uploads/2023/02/2023-Toyota-Camry-XSE-V6-Wind-Chill-Pearl-Midnight-Black-Metallic-roof.png"; // Placeholder for stability
+            else img.src = "https://www.pngmart.com/files/10/Audi-A6-PNG-File.png"; // Default
         }
 
         // --- MAPS ---
