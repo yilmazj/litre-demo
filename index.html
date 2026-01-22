@@ -114,14 +114,18 @@
                 <div class="px-6 space-y-10">
                     <div class="glass-card p-8 rounded-[3.5rem] space-y-6 shadow-2xl border-white/10 relative overflow-hidden">
                         <div class="flex justify-between items-center"><h3 class="text-xs font-black opacity-40 tracking-[0.2em] uppercase">Garajım</h3><i data-lucide="car-front" class="w-5 h-5 opacity-20"></i></div>
-                        <div class="flex justify-between items-end border-b border-white/5 pb-4">
-                            <div class="flex gap-4">
-                                <div><p class="text-[9px] opacity-40 uppercase mb-0.5">Araç</p><p id="viewFullCar" class="text-sm font-bold">Audi A6</p></div>
-                                <div><p class="text-[9px] opacity-40 uppercase mb-0.5">Yıl</p><p id="viewYıl" class="text-sm font-bold">2023</p></div>
-                            </div>
-                            <div class="text-right"><div><p class="text-[9px] opacity-40 uppercase mb-0.5">Plaka</p><p id="viewPlaka" class="text-sm font-bold tracking-tight">34 ABC 123</p></div></div>
+                        
+                        <div class="grid grid-cols-4 gap-2 border-b border-white/5 pb-4">
+                            <div><p class="text-[8px] opacity-40 uppercase mb-0.5">Marka</p><p id="viewMarka" class="text-[10px] font-bold truncate">Audi</p></div>
+                            <div><p class="text-[8px] opacity-40 uppercase mb-0.5">Model</p><p id="viewModel" class="text-[10px] font-bold truncate">A6</p></div>
+                            <div><p class="text-[8px] opacity-40 uppercase mb-0.5">Yıl</p><p id="viewYıl" class="text-[10px] font-bold">2023</p></div>
+                            <div class="text-right"><p class="text-[8px] opacity-40 uppercase mb-0.5">Plaka</p><p id="viewPlaka" class="text-[10px] font-bold truncate tracking-tighter">34 ABC 123</p></div>
                         </div>
-                        <div class="flex justify-center py-4"><img id="carImage" src="https://di-uploads-pod16.dealerinspire.com/continentaltoyota/uploads/2023/02/2023-Toyota-Camry-XSE-V6-Wind-Chill-Pearl-Midnight-Black-Metallic-roof.png" class="w-full h-32 object-contain drop-shadow-2xl transition-all duration-700" alt="Araç Görseli"></div>
+
+                        <div class="flex justify-center py-4">
+                            <img id="carImage" src="https://www.pngmart.com/files/10/Audi-A6-PNG-File.png" class="w-full h-32 object-contain drop-shadow-2xl transition-all duration-700" alt="Araç Görseli">
+                        </div>
+
                         <div class="pt-4 border-t border-white/5"><p class="text-[10px] opacity-40 font-black uppercase mb-1">Ocak Ayı Ortalama Masrafı</p><p id="viewAvgCost" class="text-2xl font-black text-blue-500 tracking-tighter">3.126,50 TL</p></div>
                     </div>
                     <div class="glass-card p-3 rounded-[2.5rem] space-y-1 shadow-2xl">
@@ -146,7 +150,7 @@
         const colors = ['Beyaz', 'Siyah', 'Gümüş', 'Mavi', 'Kırmızı'];
         let step = 0, selections = { Marka: 'Audi', Model: 'A6', Yıl: '2023', Renk: 'Siyah', Plaka: '34 ABC 123' }, tempValue = '';
 
-        // --- PICKER LOGIC (REVERTED TO WHEEL STYLE) ---
+        // --- PICKER LOGIC ---
         function startVehicleFlow() { step = 0; document.getElementById('plateInputContainer').classList.add('hidden'); document.getElementById('colorContainer').classList.add('hidden'); document.getElementById('wheelContainer').classList.remove('hidden'); updatePickerUI(); document.getElementById('pickerOverlay').style.display = 'flex'; }
         
         function updatePickerUI() {
@@ -171,16 +175,32 @@
         function handleWheelScroll(el) { const items = el.getElementsByClassName('wheel-item'); const center = el.scrollTop + 110; for (let item of items) { if (Math.abs(center - item.offsetTop - 22) < 22) { item.classList.add('selected'); tempValue = item.innerText; } else { item.classList.remove('selected'); } } }
 
         function saveToProfile() {
-            document.getElementById('viewFullCar').innerText = selections.Marka + ' ' + selections.Model;
-            document.getElementById('viewYıl').innerText = selections.Yıl; document.getElementById('viewPlaka').innerText = selections.Plaka;
+            // Arayüzdeki yazı alanlarını güncelle
+            document.getElementById('viewMarka').innerText = selections.Marka;
+            document.getElementById('viewModel').innerText = selections.Model;
+            document.getElementById('viewYıl').innerText = selections.Yıl;
+            document.getElementById('viewPlaka').innerText = selections.Plaka;
+            
             const img = document.getElementById('carImage');
-            // FIX: STABLE AND DIRECT PNG LINKS
-            if(selections.Marka === 'Suzuki') img.src = "https://www.suzuki.com.tr/upload/modeller/swift/swift-spor-renk-mavi.png";
-            else if(selections.Marka === 'Audi') img.src = "https://di-uploads-pod16.dealerinspire.com/continentaltoyota/uploads/2023/02/2023-Toyota-Camry-XSE-V6-Wind-Chill-Pearl-Midnight-Black-Metallic-roof.png"; // Placeholder for stability
-            else img.src = "https://www.pngmart.com/files/10/Audi-A6-PNG-File.png"; // Default
+            
+            // DİNAMİK RESİM MANTIĞI: Markaya göre PNG set et
+            const carImages = {
+                'Suzuki': 'https://www.suzuki.com.tr/upload/modeller/swift/swift-spor-renk-mavi.png',
+                'Audi': 'https://www.pngmart.com/files/10/Audi-A6-PNG-File.png',
+                'BMW': 'https://www.pngplay.com/wp-content/uploads/13/BMW-5-Series-Transparent-PNG.png',
+                'Volkswagen': 'https://www.pngplay.com/wp-content/uploads/13/Volkswagen-Golf-Transparent-Background.png',
+                'Fiat': 'https://www.pngplay.com/wp-content/uploads/13/Fiat-Egea-PNG-HD-Quality.png'
+            };
+
+            // Geçiş efekti ve resim değişimi
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = carImages[selections.Marka] || 'https://www.pngmart.com/files/10/Audi-A6-PNG-File.png';
+                img.style.opacity = '1';
+            }, 300);
         }
 
-        // --- MAPS ---
+        // --- MAPS & SYSTEM ---
         function initMap() { if (leafletMap) return; leafletMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([40.94, 29.14], 12); L.tileLayer(currentTheme === 'dark' ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(leafletMap); }
         function initMiniMap() { if (miniMap) return; miniMap = L.map('miniMap', { zoomControl: false, attributionControl: false, dragging: false, touchZoom: false }).setView([40.94, 29.14], 11); L.tileLayer(currentTheme === 'dark' ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(miniMap); }
 
