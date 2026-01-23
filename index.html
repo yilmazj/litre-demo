@@ -3,62 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Litre - V68 Master Revize</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon-192.png">
-
+    <title>Litre v68 Restoration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        :root { --bg: #000; --text: #fff; --card: rgba(28, 28, 30, 0.7); --border: rgba(255, 255, 255, 0.1); --subtext: #8e8e93; --accent: #007AFF; }
+        :root { --bg: #000; --text: #fff; --card: rgba(28, 28, 30, 0.7); --border: rgba(255, 255, 255, 0.1); --subtext: #8e8e93; }
         body.light-mode { --bg: #f2f2f7; --text: #000; --card: rgba(255, 255, 255, 0.9); --border: rgba(0, 0, 0, 0.05); --subtext: #636366; }
+        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; overflow: hidden; }
         
-        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, sans-serif; overflow: hidden; -webkit-tap-highlight-color: transparent; }
-        
-        #splash { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; transition: opacity 0.5s; }
-        .tab-content { display: none; height: 100vh; overflow-y: auto; background-color: var(--bg); }
+        .tab-content { display: none; height: 100vh; overflow-y: auto; background-color: var(--bg); padding-bottom: 120px; }
         .tab-content.active { display: block; }
         
-        .glass-card { background: var(--card); border: 0.5px solid var(--border); backdrop-filter: blur(20px); border-radius: 24px; }
-        .dynamic-header { padding: 60px 20px 20px 20px; display: flex; justify-content: space-between; align-items: center; }
-        
+        .glass-card { background: var(--card); border: 0.5px solid var(--border); backdrop-filter: blur(25px); border-radius: 24px; }
         .floating-dock { 
-            position: fixed; bottom: calc(30px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); 
-            width: 92%; max-width: 400px; height: 70px; background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(30px); border-radius: 35px; 
+            position: fixed; bottom: calc(25px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); 
+            width: 90%; max-width: 400px; height: 70px; background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(30px); border-radius: 35px; 
             display: flex; justify-content: space-around; align-items: center; z-index: 2000; border: 0.5px solid rgba(255,255,255,0.1);
         }
         body.light-mode .floating-dock { background: rgba(255, 255, 255, 0.8); border: 0.5px solid rgba(0,0,0,0.05); }
         .nav-item { color: var(--subtext); transition: 0.3s; }
         .nav-item.active { color: var(--text); }
 
-        /* Picker Düzenlemesi - Resim 2 */
+        /* Picker Seçim Alanı - Gri Pill */
         .wheel-wrapper { position: relative; height: 220px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .wheel-selection-highlight { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; height: 48px; background: rgba(120, 120, 128, 0.2); border-radius: 12px; pointer-events: none; }
+        .wheel-selection-highlight { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; height: 50px; background: rgba(120, 120, 128, 0.25); border-radius: 14px; pointer-events: none; }
         .wheel-picker { height: 100%; width: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; z-index: 2; }
-        .wheel-item { height: 44px; line-height: 44px; font-size: 18px; opacity: 0.3; transition: 0.2s; scroll-snap-align: center; font-weight: 500; }
+        .wheel-item { height: 50px; line-height: 50px; font-size: 18px; opacity: 0.3; transition: 0.2s; scroll-snap-align: center; }
         .wheel-item.selected { opacity: 1; font-weight: 700; font-size: 22px; }
 
         #map, #miniMap { height: 100%; width: 100%; border-radius: 24px; background: #1c1c1e; }
         .apple-map-layer { filter: invert(100%) hue-rotate(180deg) brightness(0.6) contrast(0.9); }
         body.light-mode .apple-map-layer { filter: none; }
-
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .silver-grad { background: linear-gradient(180deg, #fff 0%, #a1a1a1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        body.light-mode .silver-grad { background: none; -webkit-text-fill-color: initial; color: #000; font-weight: 800; }
     </style>
 </head>
-<body class="max-w-md mx-auto h-screen">
-
-<div id="splash">
-    <h1 class="text-4xl font-black silver-grad">Litre</h1>
-</div>
+<body class="max-w-md mx-auto h-screen overflow-hidden">
 
 <div id="pickerOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[4000] hidden items-end" onclick="closePicker()">
-    <div class="w-full bg-[var(--bg)] rounded-t-[30px] p-6 pb-12" onclick="event.stopPropagation()">
+    <div class="w-full bg-[var(--bg)] rounded-t-[35px] p-6 pb-12" onclick="event.stopPropagation()">
         <div class="flex justify-between items-center mb-6">
             <button onclick="closePicker()" class="text-zinc-500 font-medium">Vazgeç</button>
             <h3 class="font-bold text-[var(--text)]">Seçiniz</h3>
@@ -71,137 +55,128 @@
     </div>
 </div>
 
-<div id="app-content" class="opacity-0 transition-opacity duration-700">
-    <main>
-        <div id="home" class="tab-content active no-scrollbar pb-40 px-5">
-            <header class="dynamic-header px-0">
-                <h1 class="text-3xl font-black silver-grad">Litre</h1>
-                <div class="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/10" onclick="showTab('profile')">👤</div>
-            </header>
-            
-            <div class="space-y-6">
-                <div onclick="showTab('maps')" class="w-full h-56 glass-card overflow-hidden relative">
-                    <div id="miniMap" class="apple-map-layer"></div>
-                    <div class="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold border border-white/10 text-white">Yakınındaki İstasyonlar</div>
-                </div>
-
-                <div class="space-y-3" id="stationList">
-                    <div class="glass-card p-4 flex items-center gap-4">
-                        <div class="w-12 h-12 bg-[#FFD500] rounded-xl flex items-center justify-center shrink-0">
-                            <span class="text-[#DE2128] font-black text-[9px]">SHELL</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-bold text-sm text-[var(--text)]">Shell - Kadıköy</h3>
-                            <div class="flex gap-3 mt-1">
-                                <p class="text-[11px] opacity-60 text-[var(--text)]">Benzin: <span class="font-bold text-[var(--text)]">53.92₺</span></p>
-                                <p class="text-[11px] opacity-60 text-[var(--text)]">Motorin: <span class="font-bold text-[var(--text)]">55.76₺</span></p>
-                            </div>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-4 h-4 opacity-30"></i>
-                    </div>
-                    </div>
-            </div>
+<div id="settingsOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[4000] hidden items-end" onclick="closeSettings()">
+    <div class="w-full bg-[var(--bg)] rounded-t-[35px] p-6 pb-12" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center mb-8">
+            <button onclick="closeSettings()" class="text-zinc-500 font-medium">Kapat</button>
+            <h3 class="font-bold text-[var(--text)]">Ayarlar</h3>
+            <div class="w-10"></div>
         </div>
-
-        <div id="radar" class="tab-content no-scrollbar pb-40 px-5 pt-14">
-            <h2 class="text-3xl font-black silver-grad mb-6">Radar</h2>
-            
-            <div class="glass-card p-6 bg-red-500/5 border-red-500/20 mb-8">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="bg-red-500 p-2 rounded-lg"><i data-lucide="zap" class="text-white w-5 h-5"></i></div>
-                    <span class="text-[10px] font-black text-white bg-red-600 px-2.5 py-1 rounded-full uppercase">23.01.2026</span>
-                </div>
-                <h4 class="font-bold text-2xl text-[var(--text)] mb-1">Benzin +1,02 TL</h4>
-                <p class="text-sm opacity-60 text-[var(--text)]">Fiyat güncellemesi bu gece pompada.</p>
-            </div>
-
-            <div class="mb-8">
-                <h3 class="text-[10px] font-black opacity-30 uppercase tracking-widest mb-4">Bildirim Geçmişi</h3>
-                <div class="glass-card p-4 flex items-center gap-4">
-                    <div class="w-10 h-10 bg-zinc-900 rounded-full flex items-center justify-center"><i data-lucide="trending-up" class="text-red-500 w-4 h-4"></i></div>
-                    <div class="flex-1">
-                        <p class="text-sm font-bold text-[var(--text)]">Benzin Zammı</p>
-                        <p class="text-[10px] opacity-40 text-[var(--text)]">23.01.2026 · +1,02 TL</p>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <h3 class="text-[10px] font-black opacity-30 uppercase tracking-widest mb-4">Harcama Analizi</h3>
-                <div class="space-y-3">
-                    <div class="glass-card p-6">
-                        <p class="text-[10px] font-black text-blue-500 uppercase mb-1">Ocak</p>
-                        <div class="flex justify-between items-end">
-                            <p class="text-3xl font-black text-[var(--text)]">3.354 TL</p>
-                            <p class="text-sm opacity-40 text-[var(--text)]">62.5 Litre Toplam</p>
-                        </div>
-                    </div>
-                    <div class="glass-card p-6 opacity-60">
-                        <p class="text-[10px] font-black opacity-40 uppercase mb-1">Aralık</p>
-                        <p class="text-2xl font-black text-[var(--text)]">2.840 TL</p>
-                    </div>
+        <div class="space-y-4">
+            <div class="glass-card p-6">
+                <p class="text-[10px] font-black opacity-40 uppercase tracking-widest mb-4 text-[var(--text)]">Görünüm</p>
+                <div class="flex gap-4">
+                    <button onclick="setTheme('light')" class="flex-1 p-4 rounded-2xl glass-card flex items-center justify-center gap-2 border-2 border-transparent active:border-blue-500">
+                        <i data-lucide="sun" class="w-4 h-4 text-[var(--text)]"></i><span class="text-sm font-bold text-[var(--text)]">Aydınlık</span>
+                    </button>
+                    <button onclick="setTheme('dark')" class="flex-1 p-4 rounded-2xl glass-card flex items-center justify-center gap-2 border-2 border-transparent active:border-blue-500">
+                        <i data-lucide="moon" class="w-4 h-4 text-[var(--text)]"></i><span class="text-sm font-bold text-[var(--text)]">Karanlık</span>
+                    </button>
                 </div>
             </div>
         </div>
-
-        <div id="profile" class="tab-content no-scrollbar pb-40 px-5 pt-14 text-center">
-            <h2 class="text-2xl font-black silver-grad mb-1">Volkan Yılmaz</h2>
-            <div class="inline-block px-4 py-1 glass-card rounded-full text-[9px] font-black uppercase opacity-60 mb-8 tracking-widest">Premium Member</div>
-
-            <div class="space-y-4 text-left">
-                <div class="glass-card p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-[10px] font-black opacity-30 uppercase tracking-widest">Garajım</h3>
-                        <i data-lucide="car-front" class="opacity-20 w-4 h-4"></i>
-                    </div>
-                    <div class="flex justify-between border-b border-white/5 pb-6">
-                        <div><p class="text-[9px] opacity-40 uppercase">Marka</p><p id="viewMarka" class="text-lg font-black">Audi A6</p></div>
-                        <div><p class="text-[9px] opacity-40 uppercase">Yıl</p><p class="text-lg font-black">2023</p></div>
-                        <div><p class="text-[9px] opacity-40 uppercase">Plaka</p><p class="text-lg font-black">34 ABC 123</p></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mt-6">
-                        <div><p class="text-[9px] opacity-40 uppercase">Ocak Masrafı</p><p class="text-xl font-black text-blue-500">3.354,00 TL</p></div>
-                        <div><p class="text-[9px] opacity-40 uppercase">Ocak Litre</p><p class="text-xl font-black text-[var(--text)]">62.5 L</p></div>
-                    </div>
-                </div>
-
-                <div class="glass-card p-6 bg-green-500/5 border-green-500/20">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] font-black text-green-500 uppercase tracking-widest">Tasarruf Paneli</p>
-                            <p class="text-2xl font-black text-green-500 mt-1">268,32 TL</p>
-                        </div>
-                        <i data-lucide="trending-up" class="text-green-500 w-8 h-8 opacity-40"></i>
-                    </div>
-                </div>
-
-                <div class="glass-card overflow-hidden">
-                    <div onclick="startVehicleFlow()" class="p-5 flex justify-between items-center haptic-btn active:bg-white/5">
-                        <div class="flex items-center gap-4"><i data-lucide="plus-circle" class="text-blue-500 w-5 h-5"></i><span class="font-bold text-sm">Araç Güncelle</span></div>
-                        <i data-lucide="chevron-right" class="opacity-20 w-4 h-4"></i>
-                    </div>
-                    <div onclick="toggleTheme()" class="p-5 border-t border-white/5 flex justify-between items-center haptic-btn active:bg-white/5">
-                        <div class="flex items-center gap-4"><i data-lucide="settings-2" class="opacity-40 w-5 h-5"></i><span class="font-bold text-sm">Uygulama Ayarları</span></div>
-                        <i data-lucide="chevron-right" class="opacity-20 w-4 h-4"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="maps" class="tab-content h-full relative">
-            <div id="map"></div>
-            <button onclick="showTab('home')" class="absolute top-14 left-5 z-[1000] bg-black/50 backdrop-blur-xl p-3 rounded-2xl border border-white/10 text-white"><i data-lucide="chevron-left"></i></button>
-        </div>
-    </main>
-
-    <nav class="floating-dock">
-        <button onclick="showTab('home', this)" class="nav-item active"><i data-lucide="home"></i></button>
-        <button onclick="showTab('maps', this)" class="nav-item"><i data-lucide="map-pin"></i></button>
-        <button class="nav-item"><div class="bg-blue-600 p-4 rounded-[22px] shadow-lg shadow-blue-600/30"><i data-lucide="camera" class="text-white w-6 h-6"></i></div></button>
-        <button onclick="showTab('radar', this)" class="nav-item"><i data-lucide="zap"></i></button>
-        <button onclick="showTab('profile', this)" class="nav-item"><i data-lucide="user"></i></button>
-    </nav>
+    </div>
 </div>
+
+<main id="app-content" class="h-full">
+    <div id="home" class="tab-content active no-scrollbar px-5 pt-14">
+        <header class="mb-8">
+            <h1 class="text-4xl font-black text-[var(--text)]">Litre</h1>
+        </header>
+        
+        <div class="space-y-6">
+            <div onclick="showTab('maps')" class="w-full h-52 glass-card overflow-hidden">
+                <div id="miniMap" class="apple-map-layer"></div>
+            </div>
+
+            <div class="space-y-3" id="mainStationList">
+                <div class="glass-card p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#FFD500] rounded-xl flex items-center justify-center shrink-0"><span class="text-[#DE2128] font-black text-[9px]">SHELL</span></div>
+                    <div class="flex-1"><h3 class="font-bold text-sm text-[var(--text)]">Shell - Kadıköy</h3><p class="text-[11px] opacity-60 text-[var(--text)]">B: 53.92₺ · M: 55.76₺</p></div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-20"></i>
+                </div>
+                <div class="glass-card p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#005BAB] rounded-xl flex items-center justify-center shrink-0"><span class="text-white font-black text-[9px]">OPET</span></div>
+                    <div class="flex-1"><h3 class="font-bold text-sm text-[var(--text)]">Opet - Ataşehir</h3><p class="text-[11px] opacity-60 text-[var(--text)]">B: 53.90₺ · M: 55.74₺</p></div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-20"></i>
+                </div>
+                <div class="glass-card p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-[#DE2128] rounded-xl flex items-center justify-center shrink-0"><span class="text-white font-black text-[9px]">PO</span></div>
+                    <div class="flex-1"><h3 class="font-bold text-sm text-[var(--text)]">PO - Üsküdar</h3><p class="text-[11px] opacity-60 text-[var(--text)]">B: 53.92₺ · M: 57.16₺</p></div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-20"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="maps" class="tab-content h-full relative">
+        <div id="map"></div>
+        <button onclick="showTab('home')" class="absolute top-14 left-5 z-[1000] bg-black/50 backdrop-blur-xl p-3 rounded-2xl border border-white/10 text-white"><i data-lucide="chevron-left"></i></button>
+    </div>
+
+    <div id="radar" class="tab-content px-5 pt-14">
+        <h2 class="text-3xl font-black text-[var(--text)] mb-8">Radar</h2>
+        <div class="glass-card p-6 border-red-500/20 bg-red-500/5 mb-6">
+            <div class="flex justify-between mb-4"><i data-lucide="zap" class="text-red-500"></i><span class="bg-red-500 text-white text-[9px] px-2 py-1 rounded-full font-black">BUGÜN</span></div>
+            <h4 class="text-2xl font-black text-[var(--text)]">Benzin +1,02 TL</h4>
+            <p class="text-sm opacity-50 text-[var(--text)]">Gece yarısından itibaren geçerli.</p>
+        </div>
+    </div>
+
+    <div id="profile" class="tab-content px-5 pt-14">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-zinc-900 rounded-full mx-auto mb-4 flex items-center justify-center border border-white/10 text-3xl">👤</div>
+            <h2 class="text-2xl font-black text-[var(--text)]">Volkan Yılmaz</h2>
+            <p class="text-[10px] opacity-40 uppercase tracking-widest mt-1">Premium Member</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="glass-card p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-[10px] font-black opacity-30 uppercase tracking-widest">Garajım</h3>
+                    <i data-lucide="car-front" class="opacity-20 w-4 h-4 text-[var(--text)]"></i>
+                </div>
+                <div class="flex justify-between border-b border-white/5 pb-6">
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Marka</p><p id="viewMarka" class="text-lg font-black text-[var(--text)]">Audi A6</p></div>
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Yıl</p><p class="text-lg font-black text-[var(--text)]">2023</p></div>
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Plaka</p><p class="text-lg font-black text-[var(--text)] tracking-tighter">34 ABC 123</p></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 pt-6">
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Ocak Masrafı</p><p class="text-xl font-black text-blue-500">3.354 TL</p></div>
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Ocak Litre</p><p class="text-xl font-black text-[var(--text)]">62.5 L</p></div>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 bg-green-500/5 border-green-500/20 flex justify-between items-center">
+                <div><p class="text-[10px] font-black text-green-500 uppercase">Tasarruf Paneli</p><p class="text-2xl font-black text-green-500">268,32 TL</p></div>
+                <i data-lucide="trending-up" class="text-green-500 opacity-40 w-8 h-8"></i>
+            </div>
+
+            <div class="glass-card overflow-hidden">
+                <div onclick="startVehicleFlow()" class="p-5 flex justify-between items-center border-b border-white/5 active:bg-white/5">
+                    <div class="flex items-center gap-4"><i data-lucide="plus-circle" class="text-blue-500 w-5 h-5"></i><span class="font-bold text-sm text-[var(--text)]">Araç Güncelle</span></div>
+                    <i data-lucide="chevron-right" class="opacity-20 w-4 h-4"></i>
+                </div>
+                <div onclick="openSettings()" class="p-5 flex justify-between items-center border-b border-white/5 active:bg-white/5">
+                    <div class="flex items-center gap-4"><i data-lucide="settings-2" class="opacity-40 w-5 h-5 text-[var(--text)]"></i><span class="font-bold text-sm text-[var(--text)]">Uygulama Ayarları</span></div>
+                    <i data-lucide="chevron-right" class="opacity-20 w-4 h-4"></i>
+                </div>
+                <div class="p-5 flex justify-between items-center active:bg-white/5">
+                    <div class="flex items-center gap-4"><i data-lucide="archive" class="opacity-40 w-5 h-5 text-[var(--text)]"></i><span class="font-bold text-sm text-[var(--text)]">Yakıt Geçmişi</span></div>
+                    <i data-lucide="chevron-right" class="opacity-20 w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<nav class="floating-dock">
+    <button onclick="showTab('home', this)" class="nav-item active"><i data-lucide="home"></i></button>
+    <button onclick="showTab('maps', this)" class="nav-item"><i data-lucide="map-pin"></i></button>
+    <button class="nav-item"><div class="bg-blue-600 p-4 rounded-[22px] shadow-lg shadow-blue-600/30"><i data-lucide="camera" class="text-white w-6 h-6"></i></div></button>
+    <button onclick="showTab('radar', this)" class="nav-item"><i data-lucide="zap"></i></button>
+    <button onclick="showTab('profile', this)" class="nav-item"><i data-lucide="user"></i></button>
+</nav>
 
 <script>
     lucide.createIcons();
@@ -209,7 +184,6 @@
     const brands = ['Audi', 'BMW', 'BYD', 'Chevrolet', 'Fiat', 'Ford', 'Hyundai', 'Suzuki', 'Tesla'];
     let tempV = 'Audi';
 
-    // Map Init
     function initMaps() {
         if (!leafletMap) {
             leafletMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([41.0082, 28.9784], 12);
@@ -221,34 +195,33 @@
         }
     }
 
-    // Picker Logic - Resim 2'deki Gri Seçici Efekti
     function startVehicleFlow() {
         const wheel = document.getElementById('wheel');
-        wheel.innerHTML = '<div style="height: 88px;"></div>' + brands.map(b => `<div class="wheel-item">${b}</div>`).join('') + '<div style="height: 88px;"></div>';
+        wheel.innerHTML = '<div style="height: 85px;"></div>' + brands.map(b => `<div class="wheel-item text-[var(--text)]">${b}</div>`).join('') + '<div style="height: 85px;"></div>';
         document.getElementById('pickerOverlay').style.display = 'flex';
         setTimeout(() => handleWheelScroll(wheel), 10);
     }
 
     function handleWheelScroll(el) {
         const center = el.scrollTop + (el.clientHeight / 2);
-        const items = el.getElementsByClassName('wheel-item');
-        Array.from(items).forEach(item => {
+        Array.from(el.getElementsByClassName('wheel-item')).forEach(item => {
             const itemCenter = item.offsetTop + (item.clientHeight / 2);
-            if (Math.abs(center - itemCenter) < 25) {
-                item.classList.add('selected');
-                tempV = item.innerText;
-            } else {
-                item.classList.remove('selected');
-            }
+            if (Math.abs(center - itemCenter) < 25) { item.classList.add('selected'); tempV = item.innerText; } 
+            else { item.classList.remove('selected'); }
         });
     }
 
-    function processSelection() {
-        document.getElementById('viewMarka').innerText = tempV;
-        closePicker();
-    }
-
+    function processSelection() { document.getElementById('viewMarka').innerText = tempV; closePicker(); }
     function closePicker() { document.getElementById('pickerOverlay').style.display = 'none'; }
+    function openSettings() { document.getElementById('settingsOverlay').style.display = 'flex'; }
+    function closeSettings() { document.getElementById('settingsOverlay').style.display = 'none'; }
+
+    function setTheme(mode) {
+        document.body.classList.toggle('light-mode', mode === 'light');
+        document.getElementById('miniMap').classList.toggle('apple-map-layer', mode === 'dark');
+        document.getElementById('map').classList.toggle('apple-map-layer', mode === 'dark');
+        closeSettings();
+    }
 
     function showTab(t, el) {
         document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
@@ -258,23 +231,7 @@
         if(t === 'maps') { setTimeout(() => { leafletMap.invalidateSize(); }, 50); }
     }
 
-    function toggleTheme() {
-        document.body.classList.toggle('light-mode');
-        const isLight = document.body.classList.contains('light-mode');
-        document.getElementById('miniMap').classList.toggle('apple-map-layer', !isLight);
-        document.getElementById('map').classList.toggle('apple-map-layer', !isLight);
-    }
-
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.getElementById('splash').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('splash').style.display = 'none';
-                document.getElementById('app-content').classList.remove('opacity-0');
-                initMaps();
-            }, 500);
-        }, 1500);
-    });
+    window.addEventListener('load', () => { initMaps(); });
 </script>
 </body>
 </html>
