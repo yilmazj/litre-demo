@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Litre - Production V69</title>
+    <title>Litre - Production V70</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="https://via.placeholder.com/180/007AFF/FFFFFF?text=L">
+    <meta name="apple-mobile-web-app-title" content="Litre">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" href="icon-192.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -17,74 +18,94 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root { --bg: #000; --text: #fff; --card: rgba(30, 30, 32, 0.5); --border: rgba(255, 255, 255, 0.08); }
+        body.light-mode { --bg: #f2f2f7; --text: #000; --card: rgba(255, 255, 255, 0.65); --border: rgba(0, 0, 0, 0.04); }
+        
         body { 
             background-color: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; 
-            overflow: hidden; padding-top: env(safe-area-inset-top); /* 🍎 Notch Support */
+            overflow: hidden; -webkit-tap-highlight-color: transparent;
+            /* 🍎 Notch & Status Bar Support */
+            padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
-        .tab-content { display: none; height: 100%; width: 100%; position: absolute; top: 0; left: 0; overflow-y: auto; }
+        
+        #splash { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; transition: opacity 0.8s; }
+        
+        /* 📱 V68: INSTANT CUT TRANSITION (No Animation) */
+        .tab-content { display: none; height: 100%; overflow-y: auto; background-color: var(--bg); position: absolute; width: 100%; top: 0; left: 0; }
         .tab-content.active { display: block; }
+        
         .glass-card { background: var(--card); border: 0.5px solid var(--border); backdrop-filter: blur(35px) saturate(160%); border-radius: 2rem; }
+        .haptic-btn { transition: 0.1s; cursor: pointer; }
+        .haptic-btn:active { transform: scale(0.96); opacity: 0.8; }
+        
+        .dynamic-header { padding: 40px 18px 15px 18px; display: flex; justify-content: center; align-items: center; border-bottom: 0.5px solid var(--border); }
+        
         .floating-dock { 
             position: fixed; bottom: calc(25px + env(safe-area-inset-bottom)); 
             left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; height: 65px; 
-            background: var(--card); backdrop-filter: blur(45px); border-radius: 32px; 
+            background: var(--card); backdrop-filter: blur(45px); border: 0.5px solid var(--border); border-radius: 32px; 
             display: flex; justify-content: space-around; align-items: center; z-index: 2000; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-        .nav-item { color: #8e8e93; }
-        .nav-item.active { color: #fff; }
-        #map, #miniMap { height: 100%; width: 100%; min-height: 220px; border-radius: 2rem; background: #000; }
+        
+        .nav-item { color: #8e8e93; transition: 0.3s; }
+        .nav-item.active { color: var(--text); }
+        
+        #map, #miniMap { height: 100%; width: 100%; min-height: 220px; border-radius: 2rem; z-index: 1; background: #000; }
         .apple-map-layer { filter: invert(100%) hue-rotate(180deg) brightness(1.1) contrast(0.85) saturate(1.5); }
-        .wheel-item { height: 44px; line-height: 44px; font-size: 16px; opacity: 0.4; transition: 0.3s; }
+        body.light-mode .apple-map-layer { filter: none; }
+        
+        .wheel-item { height: 44px; line-height: 44px; font-size: 16px; opacity: 0.4; color: var(--text); }
         .wheel-item.selected { opacity: 1; font-weight: 800; font-size: 24px; transform: scale(1.1); color: #fff; }
+
         .toggle-switch { width: 44px; height: 24px; background: rgba(255,255,255,0.1); border-radius: 20px; position: relative; transition: 0.3s; }
         .toggle-switch.active { background: #22c55e; }
         .toggle-knob { width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
         .toggle-switch.active .toggle-knob { left: 22px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="max-w-md mx-auto h-screen">
 
-<div id="splash" class="fixed inset-0 bg-black z-[5000] flex flex-col items-center justify-center transition-opacity duration-700">
+<div id="splash">
     <svg width="80" height="100" viewBox="0 0 100 120"><defs><linearGradient id="logoSplash" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FFFFFF" /><stop offset="100%" style="stop-color:#808080" /></linearGradient></defs><path d="M50 25 C 50 25, 15 70, 15 90 A 35 35 0 0 0 85 90 C 85 70, 50 25, 50 25 Z" fill="none" stroke="url(#logoSplash)" stroke-width="12" stroke-linecap="round"/></svg>
-    <h1 class="text-4xl font-black mt-3 text-white tracking-tighter">Litre</h1>
+    <h1 class="text-4xl font-black silver-grad tracking-tight mt-3">Litre</h1>
 </div>
 
-<div id="app-content" class="opacity-0 transition-opacity duration-1000 h-full relative">
-    <main class="h-full relative overflow-hidden">
-        <div id="home" class="tab-content active p-5 pt-14 pb-32">
-            <header class="flex items-center gap-2 mb-6">
-                <svg width="25" height="30" viewBox="0 0 100 120"><path d="M50 25 C 50 25, 15 70, 15 90 A 35 35 0 0 0 85 90 C 85 70, 50 25, 50 25 Z" fill="#fff"/></svg>
-                <h1 class="text-2xl font-black">Litre</h1>
+<div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-1000 relative">
+    <main class="flex-1 relative">
+        <div id="home" class="tab-content active no-scrollbar pb-52">
+            <header class="dynamic-header">
+                <div class="flex items-center gap-2">
+                    <svg width="25" height="30" viewBox="0 0 100 120"><defs><linearGradient id="logoHeaderGrad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FFFFFF" /><stop offset="100%" style="stop-color:#808080" /></linearGradient></defs><path d="M50 25 C 50 25, 15 70, 15 90 A 35 35 0 0 0 85 90 C 85 70, 50 25, 50 25 Z" fill="none" stroke="url(#logoHeaderGrad)" stroke-width="12" stroke-linecap="round"/></svg>
+                    <h1 class="text-2xl font-black tracking-tight">Litre</h1>
+                </div>
             </header>
-            <div onclick="showTab('maps', document.getElementById('map-nav'))" class="w-full h-64 glass-card mb-8 overflow-hidden"><div id="miniMap" class="apple-map-layer"></div></div>
-            <div class="space-y-4">
-                <div class="glass-card p-5 flex justify-between items-center"><div><h3 class="font-bold text-sm">Shell - Anadolu</h3><p class="text-xs opacity-50">Benzin: 53.92 · Motorin: 55.76</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div>
-                <div class="glass-card p-5 flex justify-between items-center"><div><h3 class="font-bold text-sm">Shell - Avrupa</h3><p class="text-xs opacity-50">Benzin: 54.07 · Motorin: 55.91</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div>
-                <div class="glass-card p-5 flex justify-between items-center"><div><h3 class="font-bold text-sm">Opet - Anadolu</h3><p class="text-xs opacity-50">Benzin: 53.90 · Motorin: 55.74</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div>
-                <div class="glass-card p-5 flex justify-between items-center"><div><h3 class="font-bold text-sm">Opet - Avrupa</h3><p class="text-xs opacity-50">Benzin: 54.05 · Motorin: 55.86</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div>
-                <div class="glass-card p-5 flex justify-between items-center"><div><h3 class="font-bold text-sm">PO - Anadolu</h3><p class="text-xs opacity-50">Benzin: 53.92 · Motorin: 57.16</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div>
-                <div class="glass-card p-5 flex justify-between items-center"><div><h3 class="font-bold text-sm">PO - Avrupa</h3><p class="text-xs opacity-50">Benzin: 53.92 · Motorin: 57.11</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div>
+            <div class="p-5 space-y-6">
+                <h1 class="text-3xl font-black silver-grad leading-none">Yakınındakiler</h1>
+                <div onclick="showTab('maps', document.getElementById('map-nav'))" class="w-full h-64 glass-card overflow-hidden haptic-btn"><div id="miniMap" class="apple-map-layer"></div></div>
+                <div class="space-y-4" id="stationList">
+                    <div class="glass-card p-5 haptic-btn"><div class="flex justify-between items-center"><div><h3 class="font-bold text-sm">Shell - İstanbul Anadolu</h3><p class="text-[12px] font-bold mt-1 opacity-60">Benzin: 53.92 TL · Motorin: 55.76 TL</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div></div>
+                    <div class="glass-card p-5 haptic-btn"><div class="flex justify-between items-center"><div><h3 class="font-bold text-sm">Shell - İstanbul Avrupa</h3><p class="text-[12px] font-bold mt-1 opacity-60">Benzin: 54.07 TL · Motorin: 55.91 TL</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div></div>
+                    <div class="glass-card p-5 haptic-btn"><div class="flex justify-between items-center"><div><h3 class="font-bold text-sm">Opet - İstanbul Anadolu</h3><p class="text-[12px] font-bold mt-1 opacity-60">Benzin: 53.90 TL · Motorin: 55.74 TL</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div></div>
+                    <div class="glass-card p-5 haptic-btn"><div class="flex justify-between items-center"><div><h3 class="font-bold text-sm">PO - İstanbul Anadolu</h3><p class="text-[12px] font-bold mt-1 opacity-60">Benzin: 53.92 TL · Motorin: 57.16 TL</p></div><i data-lucide="chevron-right" class="opacity-20"></i></div></div>
+                </div>
             </div>
         </div>
 
         <div id="maps" class="tab-content h-full"><div id="map" class="apple-map-layer"></div></div>
 
-        <div id="profile" class="tab-content p-5 pt-14 pb-32">
-            <div class="flex flex-col items-center mb-10"><div class="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center text-4xl mb-3">👤</div><h2 class="text-2xl font-black">Volkan Yılmaz</h2></div>
-            <div class="glass-card p-6 mb-6">
-                <div class="flex justify-between text-center border-b border-white/5 pb-4 mb-4">
-                    <div><p class="text-[9px] opacity-40 uppercase">Marka</p><p id="viewMarka" class="font-bold">Audi A6</p></div>
-                    <div><p class="text-[9px] opacity-40 uppercase">Plaka</p><p class="font-bold">34 ABC 123</p></div>
+        <div id="profile" class="tab-content no-scrollbar pb-44 px-5 pt-14">
+            <div class="flex flex-col items-center mb-10"><div class="w-24 h-24 bg-zinc-900 rounded-full flex items-center justify-center text-5xl shadow-3xl">👤</div><h2 class="text-2xl font-black mt-4">Volkan Yılmaz</h2></div>
+            <div class="glass-card p-7 space-y-6">
+                <div class="flex justify-between text-center border-b border-white/5 pb-6">
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Araç</p><p class="text-lg font-bold">Audi A6</p></div>
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Plaka</p><p class="text-lg font-bold">34 ABC 123</p></div>
                 </div>
-                <div class="grid grid-cols-2 text-center">
-                    <div><p class="text-[9px] opacity-40 uppercase">Ocak Masrafı</p><p class="text-xl font-black text-blue-500">1.755 TL</p></div>
-                    <div><p class="text-[9px] opacity-40 uppercase">Ocak Litre</p><p class="text-xl font-black">32.5 L</p></div>
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Ocak Masrafı</p><p class="text-2xl font-black text-blue-500">1.755 TL</p></div>
+                    <div><p class="text-[9px] opacity-40 uppercase mb-1">Ocak Litre</p><p class="text-2xl font-black">32.5 L</p></div>
                 </div>
-            </div>
-            <div class="glass-card p-2 space-y-1">
-                <div onclick="openSettings()" class="p-4 flex justify-between items-center"><span class="font-bold text-sm">Uygulama Ayarları</span><i data-lucide="settings" class="w-4 h-4 opacity-30"></i></div>
-                <div onclick="openNotify()" class="p-4 border-t border-white/5 flex justify-between items-center"><span class="font-bold text-sm">Bildirim Ayarları</span><i data-lucide="bell" class="w-4 h-4 opacity-30"></i></div>
             </div>
         </div>
     </main>
@@ -92,20 +113,9 @@
     <nav class="floating-dock">
         <button onclick="showTab('home', this)" class="nav-item active"><i data-lucide="home"></i></button>
         <button id="map-nav" onclick="showTab('maps', this)"><i data-lucide="map-pin"></i></button>
-        <button class="nav-item"><div class="bg-blue-600 p-4 rounded-3xl shadow-lg"><i data-lucide="camera" class="text-white"></i></div></button>
+        <button class="nav-item"><div class="bg-blue-600 p-4 rounded-[1.8rem] shadow-xl"><i data-lucide="camera" class="text-white"></i></div></button>
         <button onclick="showTab('profile', this)" class="nav-item"><i data-lucide="user"></i></button>
     </nav>
-</div>
-
-<div id="notifyOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[4000] hidden items-end" onclick="closeNotify()">
-    <div class="glass-card w-full rounded-t-[3rem] p-8 pb-16" onclick="event.stopPropagation()">
-        <h3 class="text-lg font-black mb-6">Bildirim Ayarları</h3>
-        <div class="space-y-6">
-            <div class="flex justify-between items-center"><div><p class="font-bold text-sm">Fiyat Haberleri</p></div><div class="toggle-switch active" onclick="this.classList.toggle('active')"><div class="toggle-knob"></div></div></div>
-            <div class="flex justify-between items-center"><div><p class="font-bold text-sm">Harcama Analizi</p></div><div class="toggle-switch active" onclick="this.classList.toggle('active')"><div class="toggle-knob"></div></div></div>
-            <button onclick="closeNotify()" class="w-full p-4 bg-white/10 rounded-2xl font-bold mt-4">Kapat</button>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -123,16 +133,13 @@
         }
     }
 
-    function showTab(id, el) {
+    function showTab(tabId, el) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+        document.getElementById(tabId).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if (el) el.classList.add('active');
-        if (id === 'maps') { setTimeout(() => { leafletMap.invalidateSize(); }, 50); }
+        if(el) el.classList.add('active');
+        if(tabId === 'maps') { setTimeout(() => { leafletMap.invalidateSize(); }, 50); }
     }
-
-    function openNotify() { document.getElementById('notifyOverlay').style.display = 'flex'; }
-    function closeNotify() { document.getElementById('notifyOverlay').style.display = 'none'; }
 
     window.addEventListener('load', () => {
         setTimeout(() => {
