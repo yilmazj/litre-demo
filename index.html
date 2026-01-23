@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Litre - Classic Flow V67</title>
+    <title>Litre - Instant Cut V68</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -11,13 +11,12 @@
     <style>
         :root { --bg: #000; --text: #fff; --card: rgba(30, 30, 32, 0.5); --border: rgba(255, 255, 255, 0.08); --subtext: #8e8e93; }
         body.light-mode { --bg: #f2f2f7; --text: #000; --card: rgba(255, 255, 255, 0.65); --border: rgba(0, 0, 0, 0.04); --subtext: #636366; }
-        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; overflow: hidden; transition: 0.3s; }
+        body { background-color: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; overflow: hidden; /* No page transition */ }
         #splash { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000; transition: opacity 0.8s; }
         
+        /* 📱 V68: INSTANT CUT TRANSITION (No Animation) */
         .tab-content { display: none; height: 100%; overflow-y: auto; background-color: var(--bg); position: absolute; width: 100%; top: 0; left: 0; }
-        /* 📱 V67: Restored Classic iOS Animation (0.4s) */
-        .tab-content.active { display: block; animation: iosSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes iosSlideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .tab-content.active { display: block; /* No animation here */ }
         
         .glass-card { background: var(--card); border: 0.5px solid var(--border); backdrop-filter: blur(35px) saturate(160%); border-radius: 2rem; }
         .haptic-btn { transition: 0.1s; cursor: pointer; }
@@ -39,7 +38,6 @@
         .wheel-selection-bar { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); height: 48px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; pointer-events: none; }
         .wheel-picker { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; }
         
-        /* 🎡 V67: Perfect Balance Picker Focus */
         .wheel-item { height: 44px; line-height: 44px; font-size: 16px; opacity: 0.4; color: var(--text); transition: 0.3s cubic-bezier(0.2, 1, 0.3, 1); }
         .wheel-item.selected { opacity: 1; font-weight: 800; font-size: 24px; transform: scale(1.1); color: #fff; }
 
@@ -105,7 +103,7 @@
                     <div class="glass-card p-7 space-y-6 shadow-xl"><div class="flex justify-between items-center"><h3 class="text-[10px] font-black opacity-30 uppercase">Garajım</h3><i data-lucide="car-front" class="opacity-20 w-4 h-4"></i></div><div class="flex justify-between text-center border-b border-white/5 pb-6"><div><p class="text-[9px] opacity-40 uppercase mb-1">Marka</p><p id="viewMarka" class="text-lg font-black">Audi A6</p></div><div><p class="text-[9px] opacity-40 uppercase mb-1">Yıl</p><p id="viewYıl" class="text-lg font-black">2023</p></div><div><p class="text-[9px] opacity-40 uppercase mb-1">Plaka</p><p id="viewPlaka" class="text-lg font-black tracking-tighter">34 ABC 123</p></div></div>
                         <div class="pt-2 grid grid-cols-2 gap-4 border-t border-white/5 mt-4 pt-4"><div class="text-center"><p class="text-[9px] opacity-40 font-black uppercase mb-1">Ocak Masrafı</p><p id="viewAvgCost" class="text-2xl font-black text-blue-500">0,00 TL</p></div><div class="text-center"><p class="text-[9px] opacity-40 font-black uppercase mb-1">Ocak Litre</p><p id="viewTotalLiters" class="text-2xl font-black">0.0 L</p></div></div>
                     </div>
-                    <div class="glass-card p-6 bg-gradient-to-br from-green-500/10 to-transparent border-green-500/10 flex justify-between items-center shadow-lg"><div><h3 class="text-[10px] font-black opacity-30 uppercase text-current mb-1">Tasarruf Paneli</h3><p id="monthlySaving" class="text-2xl font-black text-green-500 tracking-tighter">142,50 TL</p></div><i data-lucide="trending-up" class="text-green-500 w-6 h-6 opacity-60"></i></div>
+                    <div class="glass-card p-6 bg-gradient-to-br from-green-500/10 to-transparent border-green-500/10 flex justify-between items-center shadow-lg"><div><h3 class="text-[10px] font-black opacity-30 uppercase mb-1">Tasarruf Paneli</h3><p id="monthlySaving" class="text-2xl font-black text-green-500 tracking-tighter">142,50 TL</p></div><i data-lucide="trending-up" class="text-green-500 w-6 h-6 opacity-60"></i></div>
                     <div class="glass-card p-3 space-y-0.5">
                         <div onclick="startVehicleFlow()" class="p-5 rounded-2xl flex items-center justify-between haptic-btn"><div class="flex items-center gap-5"><i data-lucide="plus-circle" class="text-blue-500 w-5 h-5"></i><span class="font-bold text-sm">Araç Güncelle</span></div><i data-lucide="chevron-right" class="opacity-20 w-4 h-4"></i></div>
                         <div onclick="openSettings()" class="p-5 rounded-2xl flex items-center justify-between haptic-btn border-t border-white/5"><div class="flex items-center gap-5"><i data-lucide="settings-2" class="opacity-40 w-5 h-5"></i><span class="font-bold text-sm">Uygulama Ayarları</span></div><i data-lucide="chevron-right" class="opacity-20 w-4 h-4"></i></div>
@@ -124,6 +122,7 @@
         let fuelRecords = [{ station: 'Shell - İstanbul Anadolu', date: '23.01.2026', amount: 1755.0, details: '32.5 L · 54,0 TL/L' },{ station: 'Opet - İstanbul Anadolu', date: '05.01.2026', amount: 1599.0, details: '30.0 L · 53,3 TL/L' },{ station: 'PO - İstanbul Avrupa', date: '20.12.2025', amount: 1596.0, details: '30.0 L · 53,2 TL/L' },{ station: 'Shell - İstanbul Anadolu', date: '08.12.2025', amount: 1581.0, details: '30.0 L · 52,7 TL/L' },{ station: 'Opet - İstanbul Avrupa', date: '22.11.2025', amount: 1623.0, details: '30.0 L · 54,1 TL/L' },{ station: 'PO - İstanbul Anadolu', date: '04.11.2025', amount: 1605.0, details: '30.0 L · 53,5 TL/L' },{ station: 'Shell - İstanbul Avrupa', date: '25.10.2025', amount: 1614.0, details: '30.0 L · 53,8 TL/L' },{ station: 'Opet - İstanbul Anadolu', date: '10.10.2025', amount: 1596.0, details: '30.0 L · 53,2 TL/L' },{ station: 'PO - İstanbul Avrupa', date: '22.09.2025', amount: 1602.0, details: '30.0 L · 53,4 TL/L' },{ station: 'Shell - İstanbul Anadolu', date: '05.09.2025', amount: 1590.0, details: '30.0 L · 53,0 TL/L' },{ station: 'Opet - İstanbul Avrupa', date: '18.08.2025', amount: 1569.0, details: '30.0 L · 52,3 TL/L' },{ station: 'PO - İstanbul Anadolu', date: '02.08.2025', amount: 1563.0, details: '30.0 L · 52,1 TL/L' },{ station: 'Shell - İstanbul Avrupa', date: '26.07.2025', amount: 1572.0, details: '30.0 L · 52,4 TL/L' },{ station: 'Opet - İstanbul Anadolu', date: '12.07.2025', amount: 1557.0, details: '30.0 L · 51,9 TL/L' },{ station: 'PO - İstanbul Avrupa', date: '28.06.2025', amount: 1479.0, details: '30.0 L · 49,3 TL/L' },{ station: 'Shell - İstanbul Anadolu', date: '10.06.2025', amount: 1425.0, details: '30.0 L · 47,5 TL/L' },{ station: 'Opet - İstanbul Avrupa', date: '24.05.2025', amount: 1434.0, details: '30.0 L · 47,8 TL/L' },{ station: 'PO - İstanbul Anadolu', date: '05.05.2025', amount: 1386.0, details: '30.0 L · 46,2 TL/L' }];
         const istanbulData = [{lat: 41.008, lng: 28.978, type: 'shell'}, {lat: 41.04, lng: 29.02, type: 'opet'}, {lat: 41.01, lng: 29.1, type: 'po'}, {lat: 40.98, lng: 29.05, type: 'shell'}, {lat: 41.08, lng: 28.95, type: 'opet'}, {lat: 40.92, lng: 29.15, type: 'po'}];
         
+        // V68: Using a cleaner map style without debug grids
         const tileDark = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png'; 
         const tileLight = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
 
@@ -141,7 +140,7 @@
         function updatePickerUI() { const wheel = document.getElementById('wheel'); wheel.innerHTML = '<div style="height: 75px;"></div>'; let data = step === 0 ? Object.keys(carData) : step === 1 ? carData[selections.Marka] : step === 2 ? years : []; if(step === 3) { document.getElementById('wheelContainer').classList.add('hidden'); document.getElementById('plateInputContainer').classList.remove('hidden'); document.getElementById('pickerTitle').innerText = 'Plaka Gir'; return; } data.forEach(item => wheel.innerHTML += `<div class="wheel-item">${item}</div>`); wheel.innerHTML += '<div style="height: 75px;"></div>'; wheel.scrollTop = 0; }
         function processSelection() { if(step === 0) selections.Marka = tempValue; if(step === 1) selections.Model = tempValue; if(step === 2) selections.Yıl = tempValue; if(step === 3) { selections.Plaka = document.getElementById('plateInput').value || '34 ABC 123'; document.getElementById('viewMarka').innerText = selections.Marka; document.getElementById('viewYıl').innerText = selections.Yıl; document.getElementById('viewPlaka').innerText = selections.Plaka; closePicker(); return; } step++; updatePickerUI(); }
         
-        /* 🎡 V67: PRECISION WHEEL SCROLL LISTENER */
+        /* 🎡 V68: PRECISION WHEEL SCROLL LISTENER */
         function handleWheelScroll(el) { const items = el.getElementsByClassName('wheel-item'); const center = el.scrollTop + (el.clientHeight / 2); for (let item of items) { const itemCenter = item.offsetTop + (item.clientHeight / 2); if (Math.abs(center - itemCenter) < 22) { item.classList.add('selected'); tempValue = item.innerText; } else { item.classList.remove('selected'); } } }
         
         function handleScanAction() { document.getElementById('scanOverlay').style.display = 'flex'; setTimeout(() => { document.getElementById('scanSuccess').style.display = 'flex'; const newRec = { station: 'Shell - İstanbul Anadolu', date: new Date().toLocaleDateString('tr-TR'), amount: 1755.0, details: '32.5 L · 54,0 TL/L' }; fuelRecords.unshift(newRec); updateGarageAnalysis(); setTimeout(() => { document.getElementById('scanOverlay').style.display = 'none'; document.getElementById('scanSuccess').style.display = 'none'; }, 2000); }, 3000); }
