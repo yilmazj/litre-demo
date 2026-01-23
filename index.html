@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Litre - Instant Cut V68</title>
+    <title>Litre - V69</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -60,6 +60,24 @@
     overflow-x: hidden;
     touch-action: pan-y;
     overscroll-behavior: contain;
+}
+/* 🚫 Tema seçimi lacivert focus / outline temizleme */
+.theme-option,
+.theme-option * {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.theme-option:focus,
+.theme-option:active,
+.theme-option:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* iOS tap highlight kapatma */
+.theme-option {
+    -webkit-tap-highlight-color: transparent;
 }
      </style>
 </head>
