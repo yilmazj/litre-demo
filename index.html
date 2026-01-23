@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Litre - Pure Visual Fix V46</title>
+    <title>Litre - Settings & Picker Fix V47</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -35,9 +35,15 @@
         body.light-mode .picker-overlay { background: rgba(255,255,255,0.4); }
         .picker-container { background: #1c1c1e; width: 100%; border-radius: 35px 35px 0 0; padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); color: #fff; }
         body.light-mode .picker-container { background: #f2f2f7; color: #000; border-top: 1px solid rgba(0,0,0,0.05); }
+        .wheel-wrapper { position: relative; height: 220px; overflow: hidden; }
+        .wheel-selection-bar { position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); height: 48px; background: rgba(255, 255, 255, 0.08); border-radius: 14px; pointer-events: none; }
+        body.light-mode .wheel-selection-bar { background: rgba(0, 0, 0, 0.05); }
         .wheel-picker { height: 220px; overflow-y: scroll; scroll-snap-type: y mandatory; text-align: center; }
-        .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.25; color: var(--text); }
-        .wheel-item.selected { opacity: 1; font-weight: 700; font-size: 22px; color: var(--text); }
+        
+        /* FIX: Picker Selection Visibility */
+        .wheel-item { height: 44px; line-height: 44px; scroll-snap-align: center; font-size: 18px; opacity: 0.4; color: var(--text); transition: 0.2s; }
+        .wheel-item.selected { opacity: 1; font-weight: 800; font-size: 28px; color: var(--text); }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .horizontal-carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
         .carousel-card { flex: 0 0 85%; scroll-snap-align: center; padding: 20px; border-radius: 2.5rem; background: var(--card); border: 1px solid var(--border); position: relative; }
@@ -67,7 +73,11 @@
         <div class="picker-container" onclick="event.stopPropagation()"><div class="flex justify-between mb-8 px-4"><button onclick="closePicker()" class="text-zinc-500 font-bold">Vazgeç</button><h3 id="pickerTitle" class="font-bold text-lg">Seçiniz</h3><button id="nextBtn" onclick="processSelection()" class="text-blue-500 font-bold">Devam</button></div><div id="wheelContainer"><div class="wheel-wrapper"><div class="wheel-selection-bar"></div><div id="wheel" class="wheel-picker no-scrollbar" onscroll="handleWheelScroll(this)"></div></div></div><div id="plateInputContainer" class="hidden py-10 px-4"><input type="text" id="plateInput" placeholder="34 ABC 123" class="w-full bg-zinc-800/20 border border-current opacity-20 rounded-2xl p-5 text-2xl font-black text-center uppercase outline-none"></div></div>
     </div>
     
-    <div id="settingsOverlay" class="picker-overlay" onclick="closeSettings()"><div class="picker-container" onclick="event.stopPropagation()"><div class="flex justify-between mb-8 px-4"><button onclick="closeSettings()" class="text-zinc-500 font-bold">Kapat</button><h3 class="font-bold text-lg">Görünüm Ayarları</h3><div class="w-12"></div></div><div class="space-y-4 pb-10"><div onclick="setTheme('light')" id="lightOption" class="flex justify-between items-center p-6 glass-card rounded-[2rem] border transition-all"><div class="flex items-center gap-4"><i data-lucide="sun"></i><span class="font-bold text-lg">Aydınlık Mod</span></div><div id="lightCheck" class="hidden w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div></div><div onclick="setTheme('dark')" id="darkOption" class="flex justify-between items-center p-6 glass-card rounded-[2rem] border-blue-500"><div class="flex items-center gap-4"><i data-lucide="moon"></i><span class="font-bold text-lg">Karanlık Mod</span></div><div id="darkCheck" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div></div></div></div></div>
+    <div id="settingsOverlay" class="picker-overlay" onclick="closeSettings()"><div class="picker-container" onclick="event.stopPropagation()"><div class="flex justify-between mb-8 px-4"><button onclick="closeSettings()" class="text-zinc-500 font-bold">Kapat</button><h3 class="font-bold text-lg">Görünüm Ayarları</h3><div class="w-12"></div></div><div class="space-y-4 pb-10">
+        <div onclick="setTheme('light')" id="lightOption" class="flex justify-between items-center p-6 glass-card rounded-[2rem] border transition-all"><div class="flex items-center gap-4"><i data-lucide="sun"></i><span class="font-bold text-lg">Aydınlık Mod</span></div><div id="lightCheck" class="hidden w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div></div>
+        <div onclick="setTheme('dark')" id="darkOption" class="flex justify-between items-center p-6 glass-card rounded-[2rem] border-blue-500 transition-all"><div class="flex items-center gap-4"><i data-lucide="moon"></i><span class="font-bold text-lg">Karanlık Mod</span></div><div id="darkCheck" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-white"></i></div></div>
+    </div></div></div>
+    
     <div id="historyOverlay" class="picker-overlay" onclick="closeHistory()"><div class="picker-container h-[75%]" onclick="event.stopPropagation()"><div class="flex justify-between mb-6 px-4"><button onclick="closeHistory()" class="text-zinc-500 font-bold">Kapat</button><h3 class="font-bold text-lg text-current">Yakıt Geçmişi</h3><div class="w-12"></div></div><div id="historyList" class="space-y-4 overflow-y-auto h-full pb-24 no-scrollbar"></div></div></div>
 
     <div id="app-content" class="flex flex-col h-full opacity-0 transition-opacity duration-1000">
@@ -80,8 +90,8 @@
                     <div onclick="showTab('maps', document.getElementById('map-nav'), true)" class="w-full h-64 bg-zinc-900 rounded-[3.5rem] relative overflow-hidden shadow-2xl"><div id="miniMap"></div></div>
                     <div class="flex justify-center"><div class="flex items-center gap-2.5 px-6 py-3 glass-card rounded-full"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-500"></i><span class="text-[10px] font-black uppercase tracking-[0.15em] text-current opacity-60">Konum: Kartal, İstanbul</span></div></div>
                     <div class="space-y-6">
-                        <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between"><div class="flex items-start gap-5"><div class="w-14 h-14 bg-[#FFD500] rounded-2xl flex items-center justify-center shrink-0"><span class="text-[#DE2128] font-black text-[9px]">SHELL</span></div><div class="space-y-2"><h3 class="font-bold text-sm uppercase">Shell - İçerenköy</h3><div class="space-y-1.5 text-xs font-medium"><p class="flex justify-between w-32 opacity-60">Benzin <span class="font-bold">54,00 TL</span></p><p class="flex justify-between w-32 opacity-60">Motorin <span class="font-bold">55,90 TL</span></p></div></div></div></div>
-                        <div class="glass-card p-6 rounded-[2.5rem] flex items-start justify-between"><div class="flex items-start gap-5"><div class="w-14 h-14 bg-[#005BAB] rounded-2xl flex items-center justify-center shrink-0"><span class="text-white font-black text-[9px]">OPET</span></div><div class="space-y-2"><h3 class="font-bold text-sm uppercase">Opet - Kartal</h3><div class="space-y-1.5 text-xs font-medium"><p class="flex justify-between w-32 opacity-60">Benzin <span class="font-bold">54,05 TL</span></p><p class="flex justify-between w-32 opacity-60">Motorin <span class="font-bold">55,86 TL</span></p></div></div></div></div>
+                        <div class="glass-card p-6 rounded-[2.5rem] border border-white/5 shadow-xl flex items-start justify-between"><div class="flex items-start gap-5"><div class="w-14 h-14 bg-[#FFD500] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800"><span class="text-[#DE2128] font-black text-[9px]">SHELL</span></div><div class="space-y-2"><h3 class="font-bold text-sm uppercase">Shell - İçerenköy</h3><div class="space-y-1.5 text-xs font-medium"><p class="flex justify-between w-32 opacity-60">Benzin <span class="font-bold">54,00 TL</span></p><p class="flex justify-between w-32 opacity-60">Motorin <span class="font-bold">55,90 TL</span></p></div></div></div></div>
+                        <div class="glass-card p-6 rounded-[2.5rem] border border-white/5 shadow-xl flex items-start justify-between"><div class="flex items-start gap-5"><div class="w-14 h-14 bg-[#005BAB] rounded-2xl flex items-center justify-center shrink-0 border border-zinc-800"><span class="text-white font-black text-[9px]">OPET</span></div><div class="space-y-2"><h3 class="font-bold text-sm uppercase">Opet - Kartal</h3><div class="space-y-1.5 text-xs font-medium"><p class="flex justify-between w-32 opacity-60">Benzin <span class="font-bold">54,05 TL</span></p><p class="flex justify-between w-32 opacity-60">Motorin <span class="font-bold">55,86 TL</span></p></div></div></div></div>
                     </div>
                 </div>
             </div>
@@ -146,7 +156,7 @@
                 if(!summary[key]) summary[key] = { n: names[parseInt(p[1])-1] + ' ' + p[2], t: 0, l: 0 };
                 summary[key].t += r.amount; summary[key].l += parseFloat(r.details.split(' ')[0]);
             });
-            trend.innerHTML = Object.values(summary).map(mo => `<div class="carousel-card p-6 min-w-[240px] border-current opacity-90"><p class="text-[12px] font-black uppercase mb-3 text-blue-500">${mo.n}</p><div class="space-y-4"><div><p class="text-[9px] opacity-40 uppercase">Toplam Harcama</p><p class="text-xl font-black">${mo.t.toLocaleString('tr-TR')} TL</p></div><div><p class="text-[9px] opacity-40 uppercase">Toplam Litre</p><p class="text-xl font-black">${mo.l.toFixed(1)} L</p></div></div></div>`).join('');
+            trend.innerHTML = Object.values(summary).map(mo => `<div class="carousel-card p-6 min-w-[240px] border-current opacity-90"><p class="text-[12px] font-black uppercase mb-3 text-blue-500">${mo.n}</p><div class="space-y-4"><div><p class="text-[9px] opacity-40 uppercase text-current">Toplam Harcama</p><p class="text-xl font-black text-current">${mo.t.toLocaleString('tr-TR')} TL</p></div><div><p class="text-[9px] opacity-40 uppercase text-current">Toplam Litre</p><p class="text-xl font-black text-current">${mo.l.toFixed(1)} L</p></div></div></div>`).join('');
         }
 
         const tileDark = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
@@ -156,11 +166,23 @@
         function initMap() { if (leafletMap) return; leafletMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([40.94, 29.14], 12); L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(leafletMap); stnData.forEach(s => { const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [60, 30] }); L.marker([s.lat, s.lng], { icon }).addTo(leafletMap); }); }
         function initMiniMap() { if (miniMap) return; miniMap = L.map('miniMap', { zoomControl: false, attributionControl: false, dragging: false, touchZoom: false }).setView([40.94, 29.14], 11); L.tileLayer(currentTheme === 'dark' ? tileDark : tileLight).addTo(miniMap); stnData.forEach(s => { const icon = L.divIcon({ className: '', html: `<div class="custom-pin" style="background:${s.color}">${s.price}</div>`, iconSize: [40, 20] }); L.marker([s.lat, s.lng], { icon }).addTo(miniMap); }); }
 
+        // FIX: Theme Switching Border Logic
         function setTheme(mode) { 
             currentTheme = mode; 
             document.body.classList.toggle('light-mode', mode === 'light');
             document.getElementById('lightCheck').classList.toggle('hidden', mode === 'dark');
             document.getElementById('darkCheck').classList.toggle('hidden', mode === 'light');
+            
+            const lightOpt = document.getElementById('lightOption');
+            const darkOpt = document.getElementById('darkOption');
+            if(mode === 'light') {
+                lightOpt.classList.add('border-blue-500');
+                darkOpt.classList.remove('border-blue-500');
+            } else {
+                darkOpt.classList.add('border-blue-500');
+                lightOpt.classList.remove('border-blue-500');
+            }
+
             const tile = mode === 'dark' ? tileDark : tileLight;
             if(leafletMap) { leafletMap.eachLayer(l => { if(l instanceof L.TileLayer) leafletMap.removeLayer(l); }); L.tileLayer(tile).addTo(leafletMap); }
             if(miniMap) { miniMap.eachLayer(l => { if(l instanceof L.TileLayer) miniMap.removeLayer(l); }); L.tileLayer(tile).addTo(miniMap); }
