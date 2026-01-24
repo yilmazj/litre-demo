@@ -58,6 +58,19 @@
         .silver-grad { background: linear-gradient(145deg, #FFFFFF, #808080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         body.light-mode .silver-grad { background: none; -webkit-text-fill-color: initial; color: #000; font-weight: 800; }
         @keyframes scanAnim { 0%, 100% { top: 0; } 50% { top: 100%; } }
+    <!-- PWA -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Android -->
+<meta name="theme-color" content="#000000">
+
+<!-- iOS FULLSCREEN -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Litre">
+
+<!-- iOS Icon -->
+<link rel="apple-touch-icon" href="icon-192.png">
     </style>
 </head>
 <body class="max-w-md mx-auto h-screen flex flex-col">
