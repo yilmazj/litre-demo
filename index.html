@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Litre">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#000000">
-    <title>Litre - V72 Dynamic Cities</title>
+    <title>Litre - V73 Real Data</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -91,7 +91,7 @@
 
     <div id="pickerOverlay" class="picker-overlay" onclick="closePicker()"><div class="picker-container" onclick="event.stopPropagation()"><div class="flex justify-between mb-6 px-4"><button onclick="closePicker()" class="text-zinc-500 font-bold">Vazgeç</button><h3 id="pickerTitle" class="font-bold text-lg">Seçiniz</h3><button id="nextBtn" onclick="processSelection()" class="text-blue-500 font-bold">Devam</button></div><div id="wheelContainer" class="wheel-wrapper"><div class="wheel-selection-bar"></div><div id="wheel" class="wheel-picker no-scrollbar" onscroll="handleWheelScroll(this)"></div></div><div id="plateInputContainer" class="hidden py-8 px-4"><input type="text" id="plateInput" placeholder="34 ABC 123" class="w-full bg-white/5 border border-current opacity-20 rounded-[1.8rem] p-4 text-2xl font-black text-center outline-none"></div></div></div>
     
-    <div id="cityOverlay" class="picker-overlay" onclick="closeCityPicker()"><div class="picker-container h-[80%]" onclick="event.stopPropagation()"><div class="flex justify-between items-center mb-4 px-2"><h3 class="font-bold text-lg text-current">Şehir Seçin</h3><button onclick="closeCityPicker()" class="bg-zinc-500/20 p-2 rounded-full"><i data-lucide="x" class="w-4 h-4 text-current"></i></button></div><div class="relative mb-4"><i data-lucide="search" class="absolute right-4 top-3.5 w-4 h-4 opacity-40 text-current"></i><input type="text" id="citySearch" onkeyup="filterCities()" placeholder="Şehir ara..." class="search-input"></div><div id="cityList" class="overflow-y-auto flex-1 no-scrollbar text-current font-bold text-lg"></div><div class="mt-4 pt-4 border-t border-white/10"><button onclick="reportPrice()" class="w-full bg-blue-600 p-4 rounded-2xl text-white font-bold haptic-btn flex items-center justify-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i>Fiyat Bildir</button></div></div></div>
+    <div id="cityOverlay" class="picker-overlay" onclick="closeCityPicker()"><div class="picker-container h-[80%]" onclick="event.stopPropagation()"><div class="flex justify-between items-center mb-4 px-2"><h3 class="font-bold text-lg text-current">Şehir Seçin</h3><button onclick="closeCityPicker()" class="bg-zinc-500/20 p-2 rounded-full"><i data-lucide="x" class="w-4 h-4 text-current"></i></button></div><div class="relative mb-4"><i data-lucide="search" class="absolute right-4 top-3.5 w-4 h-4 opacity-40 text-current"></i><input type="text" id="citySearch" onkeyup="filterCities()" placeholder="Şehir ara..." class="search-input"></div><div id="cityList" class="overflow-y-auto flex-1 no-scrollbar text-current font-bold text-lg"></div><div class="mt-4 pt-4 border-t border-white/10"><button onclick="reportPrice()" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 p-4 rounded-2xl text-white font-black haptic-btn flex items-center justify-center gap-3 shadow-lg shadow-blue-500/20"><i data-lucide="plus-circle" class="w-5 h-5"></i>FİYAT BİLDİR</button></div></div></div>
 
     <div id="sortOverlay" class="picker-overlay" onclick="closeSortPicker()"><div class="picker-container h-auto pb-10" onclick="event.stopPropagation()"><div class="flex justify-between mb-6 px-4"><h3 class="font-bold text-lg text-current">Sıralama</h3><button onclick="closeSortPicker()" class="text-zinc-500 font-bold">Kapat</button></div><div class="space-y-3"><button onclick="applySort('nearest')" class="w-full glass-card p-5 flex items-center justify-between haptic-btn text-current font-bold"><div class="flex items-center gap-3"><i data-lucide="navigation" class="text-blue-500 w-5 h-5"></i>En Yakın</div><i data-lucide="check" id="check-nearest" class="w-5 h-5 text-blue-500 hidden"></i></button><button onclick="applySort('cheapest')" class="w-full glass-card p-5 flex items-center justify-between haptic-btn text-current font-bold"><div class="flex items-center gap-3"><i data-lucide="tag" class="text-green-500 w-5 h-5"></i>En Ucuz</div><i data-lucide="check" id="check-cheapest" class="w-5 h-5 text-green-500 hidden"></i></button></div></div></div>
 
@@ -171,7 +171,6 @@
         const tileDark = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png'; 
         const tileLight = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
 
-        // --- DATA & LOGIC V72 ---
         const stationLogos = {
             'Shell': { bg: '#FFD500', text: '#DE2128', html: 'SHELL' },
             'Opet': { bg: '#005BAB', text: '#FFFFFF', html: 'OPET' },
@@ -181,45 +180,43 @@
             'Türkiye Petrolleri': { bg: '#E30613', text: '#FFFFFF', html: 'TP' }
         };
 
-        // Simulated Price Generator to avoid 5MB html file for 81 cities
-        // Logic: Istanbul Base Price + City Variance
         function getPricesForCity(city) {
-            const basePrices = { 'Shell': 53.92, 'Total': 53.88, 'Opet': 53.90, 'Türkiye Petrolleri': 53.75, 'Aytemiz': 53.85, 'PO': 53.92 };
-            
-            // Special Real Data for Istanbul (Split)
+            // V73: Updated Real Data for Istanbul (Jan 2026 Context)
             if(city === 'İstanbul') {
                 return [
-                    { brand: 'Shell', name: 'Shell - İstanbul Anadolu', price: 53.92, dist: 1.2 },
-                    { brand: 'Shell', name: 'Shell - İstanbul Avrupa', price: 54.07, dist: 3.5 },
-                    { brand: 'Opet', name: 'Opet - İstanbul Anadolu', price: 53.90, dist: 0.8 },
-                    { brand: 'Opet', name: 'Opet - İstanbul Avrupa', price: 54.05, dist: 5.1 },
-                    { brand: 'PO', name: 'PO - İstanbul Anadolu', price: 53.92, dist: 2.2 },
-                    { brand: 'PO', name: 'PO - İstanbul Avrupa', price: 54.12, dist: 4.8 },
-                    { brand: 'Total', name: 'Total - İstanbul Anadolu', price: 53.88, dist: 2.8 },
-                    { brand: 'Total', name: 'Total - İstanbul Avrupa', price: 53.99, dist: 6.2 },
-                    { brand: 'Türkiye Petrolleri', name: 'TP - İstanbul Anadolu', price: 53.75, dist: 7.1 },
-                    { brand: 'Türkiye Petrolleri', name: 'TP - İstanbul Avrupa', price: 53.80, dist: 4.1 },
-                    { brand: 'Aytemiz', name: 'Aytemiz - İstanbul Anadolu', price: 53.85, dist: 8.5 },
-                    { brand: 'Aytemiz', name: 'Aytemiz - İstanbul Avrupa', price: 53.95, dist: 5.5 },
+                    { brand: 'Shell', name: 'Shell - İstanbul Avrupa', benzin: 54.07, motorin: 57.34, lpg: 29.29, dist: 3.5 },
+                    { brand: 'Shell', name: 'Shell - İstanbul Anadolu', benzin: 53.92, motorin: 57.16, lpg: 28.69, dist: 1.2 },
+                    
+                    { brand: 'Opet', name: 'Opet - İstanbul Avrupa', benzin: 54.05, motorin: 57.28, lpg: 29.29, dist: 5.1 },
+                    { brand: 'Opet', name: 'Opet - İstanbul Anadolu', benzin: 53.90, motorin: 57.16, lpg: 28.69, dist: 0.8 },
+                    
+                    { brand: 'PO', name: 'PO - İstanbul Avrupa', benzin: 54.10, motorin: 57.34, lpg: 29.29, dist: 4.8 },
+                    { brand: 'PO', name: 'PO - İstanbul Anadolu', benzin: 53.92, motorin: 57.16, lpg: 28.69, dist: 2.2 },
+                    
+                    { brand: 'Total', name: 'Total - İstanbul Avrupa', benzin: 54.07, motorin: 57.35, lpg: 29.57, dist: 6.2 },
+                    { brand: 'Total', name: 'Total - İstanbul Anadolu', benzin: 53.88, motorin: 57.16, lpg: 28.69, dist: 2.8 },
+                    
+                    { brand: 'Türkiye Petrolleri', name: 'TP - İstanbul Avrupa', benzin: 50.87, motorin: 52.57, lpg: 28.93, dist: 4.1 },
+                    { brand: 'Türkiye Petrolleri', name: 'TP - İstanbul Anadolu', benzin: 50.80, motorin: 52.50, lpg: 28.85, dist: 7.1 },
+                    
+                    { brand: 'Aytemiz', name: 'Aytemiz - İstanbul Avrupa', benzin: 54.04, motorin: 57.27, lpg: 29.41, dist: 5.5 },
+                    { brand: 'Aytemiz', name: 'Aytemiz - İstanbul Anadolu', benzin: 53.89, motorin: 57.15, lpg: 28.95, dist: 8.5 },
                 ];
             }
 
-            // Generate Realistic Data for other 80 cities
+            // Fallback for other cities (Simulation)
+            const basePrices = { 'Shell': 54.00, 'Total': 54.00, 'Opet': 54.00, 'Türkiye Petrolleri': 50.90, 'Aytemiz': 54.00, 'PO': 54.00 };
             let cityStations = [];
-            // Random fluctuation based on city string length (pseudo-consistent randomness)
             const seed = city.length * 0.05; 
-            
             Object.keys(basePrices).forEach(brand => {
-                // Not every brand is in every city (Simulation)
                 if(Math.random() > 0.9 && city !== 'Ankara' && city !== 'İzmir') return; 
-
-                const priceDiff = (Math.random() * 0.5) - 0.1 + seed; // Higher prices in east generally
-                const finalPrice = (basePrices[brand] + priceDiff).toFixed(2);
-                
+                const pDiff = (Math.random() * 0.5) - 0.1 + seed;
                 cityStations.push({
                     brand: brand,
                     name: `${brand === 'Türkiye Petrolleri' ? 'TP' : brand} - ${city} Merkez`,
-                    price: finalPrice,
+                    benzin: (basePrices[brand] + pDiff).toFixed(2),
+                    motorin: (basePrices[brand] + 3.2 + pDiff).toFixed(2),
+                    lpg: (29.00 + pDiff).toFixed(2),
                     dist: (Math.random() * 5 + 0.5).toFixed(1)
                 });
             });
@@ -232,17 +229,20 @@
             data.forEach(item => {
                 const style = stationLogos[item.brand];
                 list.innerHTML += `
-                    <div class="glass-card p-5 haptic-btn station-card" data-price="${item.price}" data-dist="${item.dist}">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-white/5" style="background:${style.bg}">
+                    <div class="glass-card p-5 haptic-btn station-card" data-price="${item.benzin}" data-dist="${item.dist}">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-white/5 mt-1" style="background:${style.bg}">
                                 <span class="font-black text-[8px]" style="color:${style.text}">${style.html}</span>
                             </div>
-                            <div class="flex-1">
-                                <h3 class="font-bold text-sm text-current">${item.name}</h3>
-                                <p class="text-[12px] font-bold text-current mt-1 opacity-70">${item.dist} km uzaklıkta</p>
-                                <p class="text-[12px] font-bold text-current mt-1">Benzin: ${item.price} TL</p>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-sm text-current truncate">${item.name}</h3>
+                                <p class="text-[10px] font-bold opacity-50 mb-3">${item.dist} km uzaklıkta</p>
+                                <div class="grid grid-cols-3 gap-2 text-[10px] font-bold bg-white/5 rounded-xl p-2.5">
+                                    <div class="text-center"><div class="opacity-40 mb-1">BENZİN</div><div class="text-white text-xs">${item.benzin}</div></div>
+                                    <div class="text-center border-l border-white/10"><div class="opacity-40 mb-1">MOTORİN</div><div class="text-white text-xs">${item.motorin}</div></div>
+                                    <div class="text-center border-l border-white/10"><div class="opacity-40 mb-1">LPG</div><div class="text-white text-xs">${item.lpg}</div></div>
+                                </div>
                             </div>
-                            <div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold">${item.price}</div>
                         </div>
                     </div>
                 `;
@@ -343,7 +343,6 @@
                 document.getElementById('app-content').style.opacity = '1'; 
                 initMiniMap(); 
                 updateGarageAnalysis();
-                // Init with Istanbul
                 selectCity('İstanbul'); 
             }, 2000); 
         });
