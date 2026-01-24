@@ -2,7 +2,14 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Litre">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#000000">
     <title>Litre - Vertical Lock V69</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -58,19 +65,6 @@
         .silver-grad { background: linear-gradient(145deg, #FFFFFF, #808080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         body.light-mode .silver-grad { background: none; -webkit-text-fill-color: initial; color: #000; font-weight: 800; }
         @keyframes scanAnim { 0%, 100% { top: 0; } 50% { top: 100%; } }
-    <!-- PWA -->
-<link rel="manifest" href="manifest.json">
-
-<!-- Android -->
-<meta name="theme-color" content="#000000">
-
-<!-- iOS FULLSCREEN -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Litre">
-
-<!-- iOS Icon -->
-<link rel="apple-touch-icon" href="icon-192.png">
     </style>
 </head>
 <body class="max-w-md mx-auto h-screen flex flex-col">
@@ -176,6 +170,12 @@
         function openNotify() { document.getElementById('notifyOverlay').style.display = 'flex'; }
         function closeNotify() { document.getElementById('notifyOverlay').style.display = 'none'; }
         window.addEventListener('load', () => { setTimeout(() => { document.getElementById('splash').style.display = 'none'; document.getElementById('app-content').style.opacity = '1'; initMiniMap(); updateGarageAnalysis(); }, 2000); });
+    // Mevcut kodlarının bittiği yere, en alta yapıştır
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+    });
+}
     </script>
 </body>
 </html>
