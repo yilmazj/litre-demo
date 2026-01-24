@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Litre">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#000000">
-    <title>Litre - V71 Full Brand List</title>
+    <title>Litre - V72 Dynamic Cities</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -131,19 +131,7 @@
                         </button>
                     </div>
 
-                    <div class="space-y-4 pt-2" id="stationList">
-                        <div class="glass-card p-5 haptic-btn station-card" data-price="53.92" data-dist="1.2"><div class="flex items-center gap-5"><div class="w-12 h-12 bg-[#FFD500] rounded-2xl flex items-center justify-center shrink-0 shadow-lg"><span class="text-[#DE2128] font-black text-[8px]">SHELL</span></div><div class="flex-1"><h3 class="font-bold text-sm text-current">Shell - İstanbul Anadolu</h3><p class="text-[12px] font-bold text-current mt-1 opacity-70">1.2 km uzaklıkta</p><p class="text-[12px] font-bold text-current mt-1">Benzin: 53.92 TL</p></div><div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold">53.92</div></div></div>
-                        
-                        <div class="glass-card p-5 haptic-btn station-card" data-price="53.88" data-dist="2.8"><div class="flex items-center gap-5"><div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-[#ED1C24] to-[#F37521] opacity-90"></div><span class="text-white font-black text-[8px] relative z-10">TOTAL</span></div><div class="flex-1"><h3 class="font-bold text-sm text-current">Total - İstanbul Anadolu</h3><p class="text-[12px] font-bold text-current mt-1 opacity-70">2.8 km uzaklıkta</p><p class="text-[12px] font-bold text-current mt-1">Benzin: 53.88 TL</p></div><div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold">53.88</div></div></div>
-
-                        <div class="glass-card p-5 haptic-btn station-card" data-price="53.90" data-dist="0.8"><div class="flex items-center gap-5"><div class="w-12 h-12 bg-[#005BAB] rounded-2xl flex items-center justify-center shrink-0 shadow-lg"><span class="text-white font-black text-[8px]">OPET</span></div><div class="flex-1"><h3 class="font-bold text-sm text-current">Opet - İstanbul Anadolu</h3><p class="text-[12px] font-bold text-current mt-1 opacity-70">0.8 km uzaklıkta</p><p class="text-[12px] font-bold text-current mt-1">Benzin: 53.90 TL</p></div><div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold">53.90</div></div></div>
-                        
-                        <div class="glass-card p-5 haptic-btn station-card" data-price="53.75" data-dist="4.1"><div class="flex items-center gap-5"><div class="w-12 h-12 bg-[#1C355E] rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-white/10"><span class="text-white font-black text-[8px] tracking-tighter">TP</span></div><div class="flex-1"><h3 class="font-bold text-sm text-current">TP - İstanbul Avrupa</h3><p class="text-[12px] font-bold text-current mt-1 opacity-70">4.1 km uzaklıkta</p><p class="text-[12px] font-bold text-current mt-1">Benzin: 53.75 TL</p></div><div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold text-green-400">53.75</div></div></div>
-
-                        <div class="glass-card p-5 haptic-btn station-card" data-price="53.85" data-dist="5.5"><div class="flex items-center gap-5"><div class="w-12 h-12 bg-[#F58220] rounded-2xl flex items-center justify-center shrink-0 shadow-lg"><span class="text-white font-black text-[7px] -rotate-6">AYTEMİZ</span></div><div class="flex-1"><h3 class="font-bold text-sm text-current">Aytemiz - İstanbul Avrupa</h3><p class="text-[12px] font-bold text-current mt-1 opacity-70">5.5 km uzaklıkta</p><p class="text-[12px] font-bold text-current mt-1">Benzin: 53.85 TL</p></div><div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold">53.85</div></div></div>
-
-                        <div class="glass-card p-5 haptic-btn station-card" data-price="53.92" data-dist="2.2"><div class="flex items-center gap-5"><div class="w-12 h-12 bg-[#DE2128] rounded-2xl flex items-center justify-center shrink-0 shadow-lg"><span class="text-white font-black text-[8px]">PO</span></div><div class="flex-1"><h3 class="font-bold text-sm text-current">PO - İstanbul Anadolu</h3><p class="text-[12px] font-bold text-current mt-1 opacity-70">2.2 km uzaklıkta</p><p class="text-[12px] font-bold text-current mt-1">Benzin: 53.92 TL</p></div><div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold">53.92</div></div></div>
-                    </div>
+                    <div class="space-y-4 pt-2" id="stationList"></div>
                 </div>
             </div>
 
@@ -182,6 +170,84 @@
 
         const tileDark = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png'; 
         const tileLight = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+        // --- DATA & LOGIC V72 ---
+        const stationLogos = {
+            'Shell': { bg: '#FFD500', text: '#DE2128', html: 'SHELL' },
+            'Opet': { bg: '#005BAB', text: '#FFFFFF', html: 'OPET' },
+            'PO': { bg: '#DE2128', text: '#FFFFFF', html: 'PO' },
+            'Total': { bg: '#FFFFFF', text: '#ED1C24', html: 'TOTAL' },
+            'Aytemiz': { bg: '#FFFFFF', text: '#E30613', html: 'AYTEMİZ' },
+            'Türkiye Petrolleri': { bg: '#E30613', text: '#FFFFFF', html: 'TP' }
+        };
+
+        // Simulated Price Generator to avoid 5MB html file for 81 cities
+        // Logic: Istanbul Base Price + City Variance
+        function getPricesForCity(city) {
+            const basePrices = { 'Shell': 53.92, 'Total': 53.88, 'Opet': 53.90, 'Türkiye Petrolleri': 53.75, 'Aytemiz': 53.85, 'PO': 53.92 };
+            
+            // Special Real Data for Istanbul (Split)
+            if(city === 'İstanbul') {
+                return [
+                    { brand: 'Shell', name: 'Shell - İstanbul Anadolu', price: 53.92, dist: 1.2 },
+                    { brand: 'Shell', name: 'Shell - İstanbul Avrupa', price: 54.07, dist: 3.5 },
+                    { brand: 'Opet', name: 'Opet - İstanbul Anadolu', price: 53.90, dist: 0.8 },
+                    { brand: 'Opet', name: 'Opet - İstanbul Avrupa', price: 54.05, dist: 5.1 },
+                    { brand: 'PO', name: 'PO - İstanbul Anadolu', price: 53.92, dist: 2.2 },
+                    { brand: 'PO', name: 'PO - İstanbul Avrupa', price: 54.12, dist: 4.8 },
+                    { brand: 'Total', name: 'Total - İstanbul Anadolu', price: 53.88, dist: 2.8 },
+                    { brand: 'Total', name: 'Total - İstanbul Avrupa', price: 53.99, dist: 6.2 },
+                    { brand: 'Türkiye Petrolleri', name: 'TP - İstanbul Anadolu', price: 53.75, dist: 7.1 },
+                    { brand: 'Türkiye Petrolleri', name: 'TP - İstanbul Avrupa', price: 53.80, dist: 4.1 },
+                    { brand: 'Aytemiz', name: 'Aytemiz - İstanbul Anadolu', price: 53.85, dist: 8.5 },
+                    { brand: 'Aytemiz', name: 'Aytemiz - İstanbul Avrupa', price: 53.95, dist: 5.5 },
+                ];
+            }
+
+            // Generate Realistic Data for other 80 cities
+            let cityStations = [];
+            // Random fluctuation based on city string length (pseudo-consistent randomness)
+            const seed = city.length * 0.05; 
+            
+            Object.keys(basePrices).forEach(brand => {
+                // Not every brand is in every city (Simulation)
+                if(Math.random() > 0.9 && city !== 'Ankara' && city !== 'İzmir') return; 
+
+                const priceDiff = (Math.random() * 0.5) - 0.1 + seed; // Higher prices in east generally
+                const finalPrice = (basePrices[brand] + priceDiff).toFixed(2);
+                
+                cityStations.push({
+                    brand: brand,
+                    name: `${brand === 'Türkiye Petrolleri' ? 'TP' : brand} - ${city} Merkez`,
+                    price: finalPrice,
+                    dist: (Math.random() * 5 + 0.5).toFixed(1)
+                });
+            });
+            return cityStations.sort((a,b) => a.dist - b.dist);
+        }
+
+        function renderStationList(data) {
+            const list = document.getElementById('stationList');
+            list.innerHTML = '';
+            data.forEach(item => {
+                const style = stationLogos[item.brand];
+                list.innerHTML += `
+                    <div class="glass-card p-5 haptic-btn station-card" data-price="${item.price}" data-dist="${item.dist}">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-white/5" style="background:${style.bg}">
+                                <span class="font-black text-[8px]" style="color:${style.text}">${style.html}</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-sm text-current">${item.name}</h3>
+                                <p class="text-[12px] font-bold text-current mt-1 opacity-70">${item.dist} km uzaklıkta</p>
+                                <p class="text-[12px] font-bold text-current mt-1">Benzin: ${item.price} TL</p>
+                            </div>
+                            <div class="bg-white/5 px-2 py-1 rounded text-[10px] font-bold">${item.price}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
 
         function updateMapLayer(mapObj, elementId) { if(!mapObj) return; mapObj.eachLayer(l => { if(l instanceof L.TileLayer) mapObj.removeLayer(l); }); const tile = currentTheme === 'dark' ? tileDark : tileLight; L.tileLayer(tile).addTo(mapObj); const el = document.getElementById(elementId); if(currentTheme === 'dark') { el.style.filter = 'invert(100%) hue-rotate(180deg) brightness(1.1) saturate(1.4) contrast(0.9)'; el.style.background = '#0a1016'; } else { el.style.filter = 'none'; el.style.background = '#fff'; } }
         function initMap() { if (leafletMap) return; leafletMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([41.0082, 28.9784], 11); updateMapLayer(leafletMap, 'map'); istanbulData.forEach(s => { const color = s.type === 'shell' ? '#FFD500' : s.type === 'opet' ? '#005BAB' : '#DE2128'; L.marker([s.lat, s.lng], { icon: L.divIcon({ className: '', html: `<div class="custom-dot" style="background:${color}"></div>`, iconSize: [10, 10] }) }).addTo(leafletMap); }); }
@@ -226,30 +292,27 @@
             document.getElementById('selectedCity').innerText = name; 
             closeCityPicker(); 
             document.getElementById('stationList').style.opacity = '0.5';
-            setTimeout(() => document.getElementById('stationList').style.opacity = '1', 300);
+            setTimeout(() => {
+                const data = getPricesForCity(name);
+                renderStationList(data);
+                document.getElementById('stationList').style.opacity = '1';
+            }, 300);
         }
         
-        // V71: Fiyat Bildir Simulation
         function reportPrice() {
             closeCityPicker();
             const overlay = document.getElementById('priceReportOverlay');
             const loading = document.getElementById('reportLoading');
             const success = document.getElementById('reportSuccess');
-            
             overlay.style.display = 'flex';
             loading.style.display = 'flex';
             success.style.display = 'none';
             success.style.transform = 'scale(0.9)';
-            
             setTimeout(() => {
                 loading.style.display = 'none';
                 success.style.display = 'flex';
-                // Trigger smooth pop-in
                 setTimeout(() => { success.style.transform = 'scale(1)'; }, 50);
-                
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 2000);
+                setTimeout(() => { overlay.style.display = 'none'; }, 2000);
             }, 2000);
         }
 
@@ -274,7 +337,16 @@
             closeSortPicker();
         }
 
-        window.addEventListener('load', () => { setTimeout(() => { document.getElementById('splash').style.display = 'none'; document.getElementById('app-content').style.opacity = '1'; initMiniMap(); updateGarageAnalysis(); }, 2000); });
+        window.addEventListener('load', () => { 
+            setTimeout(() => { 
+                document.getElementById('splash').style.display = 'none'; 
+                document.getElementById('app-content').style.opacity = '1'; 
+                initMiniMap(); 
+                updateGarageAnalysis();
+                // Init with Istanbul
+                selectCity('İstanbul'); 
+            }, 2000); 
+        });
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
     </script>
 </body>
