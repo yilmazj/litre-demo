@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Litre">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#000000">
-    <title>Litre - V75 Map Sync</title>
+    <title>Litre - V76 GOLD MASTER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -64,11 +64,13 @@
         .spinner { width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Search Results for Map */
         #mapSearchResults { position: absolute; top: 70px; left: 20px; right: 20px; background: var(--card); border: 0.5px solid var(--border); border-radius: 1.5rem; backdrop-filter: blur(45px); max-height: 300px; overflow-y: auto; display: none; z-index: 3000; }
         .map-search-item { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 15px; cursor: pointer; }
         .map-search-item:last-child { border-bottom: none; }
         .map-search-icon { width: 32px; height: 32px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        
+        .action-btn-small { background: rgba(255,255,255,0.1); padding: 8px; border-radius: 10px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .action-btn-small:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body class="max-w-md mx-auto h-screen flex flex-col">
@@ -178,7 +180,7 @@
     <script>
         lucide.createIcons();
         let leafletMap, miniMap, currentTheme = 'dark';
-        let fuelRecords = [{ station: 'Shell - İstanbul Anadolu', date: '23.01.2026', amount: 1755.0, details: '32.5 L · 54,0 TL/L' },{ station: 'Opet - İstanbul Anadolu', date: '05.01.2026', amount: 1599.0, details: '30.0 L · 53,3 TL/L' },{ station: 'PO - İstanbul Avrupa', date: '20.12.2025', amount: 1596.0, details: '30.0 L · 53,2 TL/L' },{ station: 'Shell - İstanbul Anadolu', date: '08.12.2025', amount: 1581.0, details: '30.0 L · 52,7 TL/L' },{ station: 'Opet - İstanbul Avrupa', date: '22.11.2025', amount: 1623.0, details: '30.0 L · 54,1 TL/L' },{ station: 'PO - İstanbul Anadolu', date: '04.11.2025', amount: 1605.0, details: '30.0 L · 53,5 TL/L' },{ station: 'Shell - İstanbul Avrupa', date: '25.10.2025', amount: 1614.0, details: '30.0 L · 53,8 TL/L' },{ station: 'Opet - İstanbul Anadolu', date: '10.10.2025', amount: 1596.0, details: '30.0 L · 53,2 TL/L' },{ station: 'PO - İstanbul Avrupa', date: '22.09.2025', amount: 1602.0, details: '30.0 L · 53,4 TL/L' },{ station: 'Shell - İstanbul Anadolu', date: '05.09.2025', amount: 1590.0, details: '30.0 L · 53,0 TL/L' },{ station: 'Opet - İstanbul Avrupa', date: '18.08.2025', amount: 1569.0, details: '30.0 L · 52,3 TL/L' },{ station: 'PO - İstanbul Anadolu', date: '02.08.2025', amount: 1563.0, details: '30.0 L · 52,1 TL/L' },{ station: 'Shell - İstanbul Avrupa', date: '26.07.2025', amount: 1572.0, details: '30.0 L · 52,4 TL/L' },{ station: 'Opet - İstanbul Anadolu', date: '12.07.2025', amount: 1557.0, details: '30.0 L · 51,9 TL/L' },{ station: 'PO - İstanbul Avrupa', date: '28.06.2025', amount: 1479.0, details: '30.0 L · 49,3 TL/L' },{ station: 'Shell - İstanbul Anadolu', date: '10.06.2025', amount: 1425.0, details: '30.0 L · 47,5 TL/L' },{ station: 'Opet - İstanbul Avrupa', date: '24.05.2025', amount: 1434.0, details: '30.0 L · 47,8 TL/L' },{ station: 'PO - İstanbul Anadolu', date: '05.05.2025', amount: 1386.0, details: '30.0 L · 46,2 TL/L' }];
+        let fuelRecords = [{ station: 'Shell - İstanbul Anadolu', date: '23.01.2026', amount: 1755.0, details: '32.5 L · 54,0 TL/L' },{ station: 'Opet - İstanbul Anadolu', date: '05.01.2026', amount: 1599.0, details: '30.0 L · 53,3 TL/L' }];
         const istanbulData = [{lat: 41.008, lng: 28.978, type: 'shell'}, {lat: 41.04, lng: 29.02, type: 'opet'}, {lat: 41.01, lng: 29.1, type: 'po'}, {lat: 40.98, lng: 29.05, type: 'shell'}, {lat: 41.08, lng: 28.95, type: 'opet'}, {lat: 40.92, lng: 29.15, type: 'po'}];
         
         const cities = ["Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydın", "Balıkesir", "Bartın", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Düzce", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdır", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kırıkkale", "Kırklareli", "Kırşehir", "Kilis", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Şanlıurfa", "Şırnak", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak", "Van", "Yalova", "Yozgat", "Zonguldak"];
@@ -242,11 +244,15 @@
             return cityStations.sort((a,b) => a.dist - b.dist);
         }
 
-        function renderStationList(data) {
+        function renderStationList(data, cityName) {
             const list = document.getElementById('stationList');
             list.innerHTML = '';
             data.forEach(item => {
                 const style = stationLogos[item.brand];
+                // V76: Added Navigation Link + Share
+                const navQuery = `${item.name.replace(' ', '+')}+${cityName}`;
+                const navLink = `https://www.google.com/maps/search/?api=1&query=${navQuery}`;
+                
                 list.innerHTML += `
                     <div class="glass-card p-5 haptic-btn station-card" data-price="${item.benzin}" data-dist="${item.dist}">
                         <div class="flex items-start gap-4">
@@ -256,16 +262,38 @@
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-bold text-sm text-current truncate">${item.name}</h3>
                                 <p class="text-[10px] font-bold opacity-50 mb-3">${item.dist} km uzaklıkta</p>
-                                <div class="grid grid-cols-3 gap-2 text-[10px] font-bold bg-white/5 rounded-xl p-2.5">
+                                <div class="grid grid-cols-3 gap-2 text-[10px] font-bold bg-white/5 rounded-xl p-2.5 mb-3">
                                     <div class="text-center"><div class="opacity-40 mb-1">BENZİN</div><div class="text-current text-xs">${item.benzin}</div></div>
                                     <div class="text-center border-l border-white/10"><div class="opacity-40 mb-1">MOTORİN</div><div class="text-current text-xs">${item.motorin}</div></div>
                                     <div class="text-center border-l border-white/10"><div class="opacity-40 mb-1">LPG</div><div class="text-current text-xs">${item.lpg}</div></div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="${navLink}" target="_blank" class="flex-1 action-btn-small text-current">
+                                        <i data-lucide="navigation-2" class="w-4 h-4 mr-2 text-blue-500"></i><span class="text-xs font-bold">Yol Tarifi</span>
+                                    </a>
+                                    <button onclick="sharePrice('${item.name}', '${item.benzin}')" class="action-btn-small w-10 text-current">
+                                        <i data-lucide="share" class="w-4 h-4 opacity-60"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 `;
             });
+            lucide.createIcons();
+        }
+
+        // V76: Share Function
+        function sharePrice(station, price) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Ucuz Yakıt Buldum!',
+                    text: `${station} istasyonunda benzin sadece ${price} TL! Litre uygulamasından buldum.`,
+                    url: window.location.href
+                });
+            } else {
+                alert('Panoya kopyalandı!');
+            }
         }
 
         function updateMapLayer(mapObj, elementId) { if(!mapObj) return; mapObj.eachLayer(l => { if(l instanceof L.TileLayer) mapObj.removeLayer(l); }); const tile = currentTheme === 'dark' ? tileDark : tileLight; L.tileLayer(tile).addTo(mapObj); const el = document.getElementById(elementId); if(currentTheme === 'dark') { el.style.filter = 'invert(100%) hue-rotate(180deg) brightness(1.1) saturate(1.4) contrast(0.9)'; el.style.background = '#0a1016'; } else { el.style.filter = 'none'; el.style.background = '#fff'; } }
@@ -277,10 +305,25 @@
         
         const carData = { 'Audi': ['A3', 'A4', 'A6', 'A8', 'Q5'], 'BMW': ['1 Serisi', '3 Serisi', '5 Serisi'], 'BYD': ['Seal', 'Atto 3'], 'Chevrolet': ['Cruze'], 'Fiat': ['Egea', '500'], 'Ford': ['Focus'], 'Hyundai': ['i20'], 'Mercedes-Benz': ['C-Serisi'], 'Porsche': ['911'], 'Suzuki': ['Swift'], 'Tesla': ['Model 3'], 'Toyota': ['Corolla'], 'Volkswagen': ['Golf'], 'Volvo': ['XC90'] };
         const years = Array.from({length: 37}, (_, i) => (2026-i).toString());
-        let step = 0, selections = { Marka: 'Audi', Model: 'A6', Yıl: '2023', Plaka: '34 ABC 123' }, tempValue = '';
+        // V76: LocalStorage for Garage
+        let savedGarage = JSON.parse(localStorage.getItem('garage'));
+        let step = 0, selections = savedGarage || { Marka: 'Audi', Model: 'A6', Yıl: '2023', Plaka: '34 ABC 123' }, tempValue = '';
+
         function startVehicleFlow() { step = 0; document.getElementById('plateInputContainer').classList.add('hidden'); document.getElementById('wheelContainer').classList.remove('hidden'); updatePickerUI(); document.getElementById('pickerOverlay').style.display = 'flex'; }
         function updatePickerUI() { const wheel = document.getElementById('wheel'); wheel.innerHTML = '<div style="height: 75px;"></div>'; let data = step === 0 ? Object.keys(carData) : step === 1 ? carData[selections.Marka] : step === 2 ? years : []; if(step === 3) { document.getElementById('wheelContainer').classList.add('hidden'); document.getElementById('plateInputContainer').classList.remove('hidden'); document.getElementById('pickerTitle').innerText = 'Plaka Gir'; return; } data.forEach(item => wheel.innerHTML += `<div class="wheel-item">${item}</div>`); wheel.innerHTML += '<div style="height: 75px;"></div>'; wheel.scrollTop = 0; }
-        function processSelection() { if(step === 0) selections.Marka = tempValue; if(step === 1) selections.Model = tempValue; if(step === 2) selections.Yıl = tempValue; if(step === 3) { selections.Plaka = document.getElementById('plateInput').value || '34 ABC 123'; document.getElementById('viewMarka').innerText = selections.Marka; document.getElementById('viewYıl').innerText = selections.Yıl; document.getElementById('viewPlaka').innerText = selections.Plaka; closePicker(); return; } step++; updatePickerUI(); }
+        function processSelection() { if(step === 0) selections.Marka = tempValue; if(step === 1) selections.Model = tempValue; if(step === 2) selections.Yıl = tempValue; if(step === 3) { selections.Plaka = document.getElementById('plateInput').value || '34 ABC 123'; saveGarageData(); closePicker(); return; } step++; updatePickerUI(); }
+        
+        function saveGarageData() {
+            localStorage.setItem('garage', JSON.stringify(selections));
+            renderGarageUI();
+        }
+
+        function renderGarageUI() {
+            document.getElementById('viewMarka').innerText = selections.Marka + ' ' + selections.Model;
+            document.getElementById('viewYıl').innerText = selections.Yıl;
+            document.getElementById('viewPlaka').innerText = selections.Plaka;
+        }
+
         function handleWheelScroll(el) { const items = el.getElementsByClassName('wheel-item'); const center = el.scrollTop + (el.clientHeight / 2); for (let item of items) { const itemCenter = item.offsetTop + (item.clientHeight / 2); if (Math.abs(center - itemCenter) < 22) { item.classList.add('selected'); tempValue = item.innerText; } else { item.classList.remove('selected'); } } }
         function handleScanAction() { document.getElementById('scanOverlay').style.display = 'flex'; setTimeout(() => { document.getElementById('scanSuccess').style.display = 'flex'; const newRec = { station: 'Shell - İstanbul Anadolu', date: new Date().toLocaleDateString('tr-TR'), amount: 1755.0, details: '32.5 L · 54,0 TL/L' }; fuelRecords.unshift(newRec); updateGarageAnalysis(); setTimeout(() => { document.getElementById('scanOverlay').style.display = 'none'; document.getElementById('scanSuccess').style.display = 'none'; }, 2000); }, 3000); }
         function showTab(tabId, el, isMap = false) { document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active')); document.getElementById(tabId).classList.add('active'); if(el) { document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active')); el.classList.add('active'); } if(tabId === 'maps') { setTimeout(() => { initMap(); leafletMap.invalidateSize(); }, 300); } }
@@ -312,7 +355,6 @@
             closeCityPicker(); 
             document.getElementById('stationList').style.opacity = '0.5';
             
-            // V75 FIX: Move BOTH maps
             if(cityCoordinates[name]) {
                 if(leafletMap) leafletMap.setView(cityCoordinates[name], 10);
                 if(miniMap) miniMap.setView(cityCoordinates[name], 10);
@@ -320,12 +362,11 @@
 
             setTimeout(() => {
                 const data = getPricesForCity(name);
-                renderStationList(data);
+                renderStationList(data, name);
                 document.getElementById('stationList').style.opacity = '1';
             }, 300);
         }
         
-        // V75: Functional Map Search
         function handleMapSearch() {
             const input = document.getElementById('mapSearchInput');
             const results = document.getElementById('mapSearchResults');
@@ -404,10 +445,10 @@
         }
 
         window.addEventListener('load', () => { 
-            // V75 FIX: Initialize Data BEFORE splash removal
             initMiniMap();
             updateGarageAnalysis();
-            selectCity('İstanbul'); // Pre-load data
+            renderGarageUI(); // Load saved garage
+            selectCity('İstanbul'); 
 
             setTimeout(() => { 
                 document.getElementById('splash').style.display = 'none'; 
