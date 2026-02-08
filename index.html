@@ -1632,6 +1632,21 @@
             localStorage.setItem('intro_shown', 'true');
             initMap(); // Start map after closing intro
         }
+        function startOnboarding() {
+    const logo = document.getElementById('logoAnim');
+    const title = document.getElementById('titleAnim');
+    const desc = document.getElementById('descAnim');
+    
+    // Hepsini aşağı düşür
+    logo.classList.add('drop-active');
+    title.classList.add('active');
+    desc.classList.add('active');
+    
+    // Animasyon bitince diğer sayfaya geç (Süreyi biraz artırdık ki düşüş tam görünsün)
+    setTimeout(() => {
+        nextSlide(2);
+    }, 1200); 
+}
 
         function nextSlide(n) {
             document.querySelectorAll('.onboard-slide').forEach(s => s.classList.remove('active'));
